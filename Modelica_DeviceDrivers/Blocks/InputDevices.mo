@@ -4,39 +4,38 @@ package InputDevices
   block JoystickInput
     "Joystick input implementation for interactive simulations"
     extends Modelica_DeviceDrivers.Utilities.Icons.BaseIcon;
-    import Modelica_DeviceDrivers.InputDevices.GameController;
-    parameter Modelica.SIunits.Period sampleTime = 0.01 "sample time for input update";
+    parameter Real sampleTime = 0.01 "sample time for input update";
     parameter Real gain[6] = ones(6) "gain of axis output";
     parameter Integer ID= 0
       "ID number of the joystick (0 = first joystick attached to the system)";
-    Modelica.Blocks.Interfaces.RealOutput axes[6](start=-ones(6), each fixed=false)
+    Modelica.Blocks.Interfaces.RealOutput axes[6](start=zeros(6))
       annotation (Placement(transformation(extent={{100,50},{120,70}})));
-    discrete Modelica.Blocks.Interfaces.RealOutput pOV annotation (Placement(
+    Modelica.Blocks.Interfaces.RealOutput pOV annotation (Placement(
           transformation(extent={{100,-10},{120,10}})));
-    discrete Modelica.Blocks.Interfaces.IntegerOutput buttons[32](start=zeros(32), each fixed=true)
+    Modelica.Blocks.Interfaces.IntegerOutput buttons[8]
       annotation (Placement(transformation(extent={{100,-70},{120,-50}})));
   protected
-    GameController joystick = GameController(ID);
-    discrete Real AxesRaw[6](start=zeros(6), each fixed=true) "unscaled joystick input";
+    Real AxesRaw[6] "unscaled joystick input";
   equation
-    when sample(0,sampleTime) then
-      (AxesRaw,buttons,pOV) = Modelica_DeviceDrivers.InputDevices.GameController_.getData(joystick);
+    when initial() or (sample(0,sampleTime)) then
+      (AxesRaw,buttons,pOV) =
+        Modelica_DeviceDrivers.InputDevices.GameController.getData(ID);
     end when;
     axes = (AxesRaw .- 32768)/32768 ./gain;
     annotation (Icon(coordinateSystem(preserveAspectRatio=false, extent={{-100,
               -100},{100,100}}), graphics={Bitmap(extent={{-86,88},{88,-88}},
-              fileName="modelica://Modelica_DeviceDrivers/Resources/Images/Icons/joystick.png"), Text(extent={
+              fileName="../Resources/Images/Icons/joystick.png"), Text(extent={
                 {-150,140},{150,100}}, textString="%name")}),
                 preferredView="info",Documentation(info="<html> This block reads data from the joystick ID (0 = first joystick appearing in windows control panel).
                                 Multible blocks can be used in order to retrieve data from more than one joysticks.
-                                Up to six axes and 32 buttons are supported. The input values ranges between -1 and 1 and can be scaled by the
+                                Up to six axes and eight buttons are supported. The input values ranges between -1 and 1 and can be scaled by the
                                 vector <b>gain</b>. Via the parameter <b>sampleTime</b> the input sampling rate is chosen.</html>"));
   end JoystickInput;
 
   block KeyboardKeyInput
     "Keyboard input implementation for interactive simulations"
     extends Modelica_DeviceDrivers.Utilities.Icons.BaseIcon;
-    parameter Modelica.SIunits.Period sampleTime=0.01 "sample time for input update";
+    parameter Real sampleTime=0.01 "sample time for input update";
     parameter Modelica_DeviceDrivers.Blocks.InputDevices.Types.keyCodes keyCode="Return"
       "Monitored Key";
     parameter Boolean useKeyKombination=false
@@ -47,7 +46,6 @@ package InputDevices
       "Additional monitored key for key combination" annotation(Dialog(enable=useKeyKombination));
     Modelica.Blocks.Interfaces.BooleanOutput keyState
       annotation (Placement(transformation(extent={{100,-10},{120,10}})));
-
   protected
     encapsulated function getKeyCode
       input String keyCode;
@@ -69,7 +67,10 @@ package InputDevices
          else if (keyCode == "3") then 51 else if (keyCode == "4") then 52 else
         if (keyCode == "5") then 53 else if (keyCode == "6") then 54 else if (
         keyCode == "7") then 55 else if (keyCode == "8") then 56 else if (keyCode == "9")
-         then 57 else if (keyCode == "Return") then 13 else if (keyCode == "Control")
+         then 57 else if (keyCode == "Return") then 13
+         else if (keyCode == "Shift")
+         then 16
+         else if (keyCode == "Control")
          then 17 else if (keyCode == "Space") then 32 else if (keyCode == "Alt")
          then 18 else if (keyCode == "Home") then 36 else if (keyCode == "End")
          then 35 else if (keyCode == "Left") then 37 else if (keyCode == "Right")
@@ -90,13 +91,12 @@ package InputDevices
          then 120 else if (keyCode == "F10") then 121 else if (keyCode == "F11")
          then 122 else if (keyCode == "F12") then 123 else 13;
     end getKeyCode;
-
     final parameter Integer keyCodeInt=getKeyCode(keyCode);
     final parameter Integer additionalKeyCodeInt=getKeyCode(additionalKeyCode);
     Integer keyStateInt(start=0, fixed=true);
     Integer additionalKeyStateInt(start=0, fixed=true);
   equation
-    when sample(0, sampleTime) then
+    when (sample(0, sampleTime)) then
       keyStateInt = Modelica_DeviceDrivers.InputDevices.Keyboard.getKey(keyCodeInt); //getting the KeyCode
       additionalKeyStateInt = Modelica_DeviceDrivers.InputDevices.Keyboard.getKey(additionalKeyCodeInt);
     end when;
@@ -158,7 +158,7 @@ package InputDevices
   block SpaceMouseInput
     "SpaceMouse input implementation for interactive simulations"
     extends Modelica_DeviceDrivers.Utilities.Icons.BaseIcon;
-    parameter Modelica.SIunits.Period sampleTime = 0.01 "sample time for input update";
+    parameter Real sampleTime = 0.01 "sample time for input update";
     parameter Real gain[6] = ones(6) "gain of axis output";
     Modelica.Blocks.Interfaces.RealOutput axes[6]
       annotation (Placement(transformation(extent={{100,50},{120,70}})));
@@ -171,7 +171,8 @@ package InputDevices
       annotation (Placement(transformation(extent={{-10,-10},{10,10}},
           origin={50,60})));
   equation
-    when sample(0,sampleTime) then
+    when
+        (sample(0,sampleTime)) then
       (AxesRaw,buttons) = Modelica_DeviceDrivers.InputDevices.SpaceMouse.getData();
     end when;
     firstOrder.u = AxesRaw/400 .*gain;
@@ -192,7 +193,7 @@ package InputDevices
   block KeyboardInput
     "Keyboard input implementation for interactive simulations"
     extends Modelica_DeviceDrivers.Utilities.Icons.BaseIcon;
-    parameter Modelica.SIunits.Period sampleTime = 0.01 "sample time for input update";
+    parameter Real sampleTime = 0.01 "sample time for input update";
     Modelica.Blocks.Interfaces.BooleanOutput keyUp
       annotation (Placement(transformation(extent={{100,50},{120,70}})));
     Modelica.Blocks.Interfaces.BooleanOutput keyDown
@@ -217,11 +218,11 @@ package InputDevices
   protected
     Integer KeyCode[10](each start=0, each fixed=true);
   equation
-    when sample(0,sampleTime) then
+    when
+        (sample(0,sampleTime)) then
       KeyCode = Modelica_DeviceDrivers.InputDevices.Keyboard.getData();
-      //getting the KeyCode
+                                              //getting the KeyCode
     end when;
-  equation
     keyUp = if (KeyCode[1]==1) then true else false;
     keyDown = if (KeyCode[2]==1) then true else false;
     keyRight = if (KeyCode[3]==1) then true else false;
@@ -377,7 +378,7 @@ package InputDevices
   end KeyboardInput;
 
   package Types
-      extends Modelica.Icons.TypesPackage;
+      extends Modelica.Icons.Package;
     type keyCodes =  Modelica.Icons.TypeString
     annotation (
       preferedView="text",
@@ -420,6 +421,7 @@ package InputDevices
         choice="Y" "Y",
         choice="Z" "Z",
         choice="Return" "Return",
+        choice="Shift" "Shift",
         choice="Control" "Control",
         choice="Space" "Space",
         choice="Alt" "Alt",

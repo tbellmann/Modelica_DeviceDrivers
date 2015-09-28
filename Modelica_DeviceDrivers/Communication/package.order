@@ -2,11 +2,11 @@ SharedMemory
 SharedMemory_
 UDPSocket
 UDPSocket_
+TCPSocket
+TCPSocket_
 SoftingCAN
 SoftingCAN_
 SocketCAN
 SocketCAN_
 SerialPort
 SerialPort_
-TCPIPSocketClient
-TCPIPSocketClient_

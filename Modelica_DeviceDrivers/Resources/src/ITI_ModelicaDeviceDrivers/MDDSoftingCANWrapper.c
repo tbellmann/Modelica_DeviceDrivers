@@ -1,7 +1,7 @@
 /** Wrapping header-only library MDDSoftingCAN.h into a DLL.
  *
  * @file
- * @author		bernhard-thiele
+ * @author		Bernhard Thiele <bernhard.thiele@dlr.de>
  * @since		2014-04-12
  * @copyright Modelica License 2
  *

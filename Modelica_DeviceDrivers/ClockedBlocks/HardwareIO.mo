@@ -1,6 +1,6 @@
 within Modelica_DeviceDrivers.ClockedBlocks;
 package HardwareIO
-  "Data acquisition hardware like digital-analog converter, analog-digital converter and other interface hardware."
+  "Data aquisition hardware like digital-analog converter, analog-digital converter and other interface hardware."
  extends Modelica.Icons.Package;
 
   package Comedi
@@ -21,42 +21,46 @@ package HardwareIO
             Text(
               extent={{-98,72},{94,46}},
               textString="%deviceName"),
-              Bitmap(extent={{-96,20},{10,-92}}, fileName=
+              Bitmap(extent={{-96,20},{10,-92}},     fileName=
                   "modelica://Modelica_DeviceDrivers/Resources/Images/Icons/gears.png")}),
         Documentation(info="<html>
 <p>Record for configuring a Comedi device. At initialization time the comedi device given by the parameter <code>deviceName </code>will be opened and a handle to that device will be assigned to the final parameter<code> dh.</code>This handle needs to be passed as parameter to the remaining Comedi read and write blocks<code>.</code></p>
 <h4><font color=\"#008000\">Note</font></h4>
-<p>Only supported for Linux, since Comedi is only available for linux (<a href=\"http://www.comedi.org/\">http://www.comedi.org/</a>). Requires that Comedilib is installed and that the simulation process has sufficiant privileges to access the intended device (usually that requires &quot;root&quot; privileges).</p>
+<p>Only supported for Linux, since Comedi is only available for linux (<a href=\"http://www.comedi.org/\">http://www.comedi.org/</a>). Requires that Comedilib is installed and that the simulation process has sufficiant privileges to access the intended device (usually that requires &quot;root&quot; privileges).  </p>
 </html>"));
     end ComediConfig;
 
     block DataWrite "Write raw Integer value to Comedi DAC channel"
+      import Modelica_DeviceDrivers;
       extends Modelica_DeviceDrivers.Utilities.Icons.BaseIcon;
       extends
         Modelica_DeviceDrivers.Utilities.Icons.PartialClockedDeviceDriverIcon;
       extends Modelica_DeviceDrivers.Utilities.Icons.LinuxTuxBlockIcon;
       Modelica.Blocks.Interfaces.IntegerInput u
         annotation (Placement(transformation(extent={{-140,-20},{-100,20}})));
+      import Modelica_DeviceDrivers.ClockedBlocks.HardwareIO.Comedi.Types;
       import Modelica_DeviceDrivers.HardwareIO.Comedi;
 
       parameter Comedi comedi "Handle to comedi device";
       parameter Integer subDevice=1 "Subdevice";
       parameter Integer channel=0 "Channel";
       parameter Integer range=0 "Range";
-      parameter Types.Aref aref=Types.Aref.AREF_GROUND "(ground) Reference to use";
+      parameter
+        Modelica_DeviceDrivers.ClockedBlocks.HardwareIO.Comedi.Types.Aref         aref=Types.Aref.AREF_GROUND
+        "(ground) Reference to use";
     equation
       when Clock() then
-        Modelica_DeviceDrivers.HardwareIO.Comedi_.data_write(
-          comedi, subDevice, channel, range, if aref==Types.Aref.AREF_GROUND then 0 elseif aref==Types.Aref.AREF_COMMON then 1 elseif aref==Types.Aref.AREF_DIFF then 2 else 3, u);
+         Modelica_DeviceDrivers.HardwareIO.Comedi_.data_write(
+                           comedi, subDevice, channel, range, aref - 1,  u);
       end when;
 
       annotation (defaultComponentName="dataWrite",
               preferredView="info",
-              Icon(graphics={Text(extent={{-222,
+              Icon(graphics={                                       Text(extent={{-222,
                   88},{222,58}},
-              textString="Subdevice: %subDevice"), Text(extent={{-222,
+              textString="Subdevice: %subDevice"),                  Text(extent={{-222,
                   54},{222,24}},
-              textString="Channel: %channel"), Text(extent={{-220,
+              textString="Channel: %channel"),                      Text(extent={{-220,
                   -104},{224,-134}},
               textString="Device: %comedi"), Text(extent={{-150,142},{150,102}},
                 textString="%name")}),
@@ -69,32 +73,36 @@ package HardwareIO
     end DataWrite;
 
     block DataRead "Read raw Integer value from Comedi ADC channel"
+      import Modelica_DeviceDrivers;
       extends Modelica_DeviceDrivers.Utilities.Icons.BaseIcon;
       extends
         Modelica_DeviceDrivers.Utilities.Icons.PartialClockedDeviceDriverIcon;
       extends Modelica_DeviceDrivers.Utilities.Icons.LinuxTuxBlockIcon;
+      import Modelica_DeviceDrivers.ClockedBlocks.HardwareIO.Comedi.Types;
       import Modelica_DeviceDrivers.HardwareIO.Comedi;
 
       parameter Comedi comedi "Handle to comedi device";
       parameter Integer subDevice=0 "Subdevice";
       parameter Integer channel=0 "Channel";
       parameter Integer range=0 "Range";
-      parameter Types.Aref aref=Types.Aref.AREF_GROUND "(ground) Reference to use";
+      parameter
+        Modelica_DeviceDrivers.ClockedBlocks.HardwareIO.Comedi.Types.Aref         aref=Types.Aref.AREF_GROUND
+        "(ground) Reference to use";
       Modelica.Blocks.Interfaces.IntegerOutput y
         annotation (Placement(transformation(extent={{100,-10},{120,10}})));
     equation
       when Clock() then
-        y = Modelica_DeviceDrivers.HardwareIO.Comedi_.data_read(
-          comedi, subDevice, channel, range, if aref==Types.Aref.AREF_GROUND then 0 elseif aref==Types.Aref.AREF_COMMON then 1 elseif aref==Types.Aref.AREF_DIFF then 2 else 3);
+         y = Modelica_DeviceDrivers.HardwareIO.Comedi_.data_read(
+                              comedi, subDevice, channel, range, aref - 1);
       end when;
 
       annotation (defaultComponentName="dataRead",
               preferredView="info",
-              Icon(graphics={Text(extent={{-222,
+              Icon(graphics={                                       Text(extent={{-222,
                   88},{222,58}},
-              textString="Subdevice: %subDevice"), Text(extent={{-222,
+              textString="Subdevice: %subDevice"),                  Text(extent={{-222,
                   54},{222,24}},
-              textString="Channel: %channel"), Text(extent={{-220,
+              textString="Channel: %channel"),                      Text(extent={{-220,
                   -104},{224,-134}},
               textString="Device: %comedi"), Text(extent={{-152,142},{148,102}},
                 textString="%name")}),        Documentation(info="<html>
@@ -107,23 +115,29 @@ package HardwareIO
 
     block PhysicalDataWrite
       "Write physical value (volts or milliamps) to Comedi DAC channel"
+      import Modelica_DeviceDrivers;
       extends Modelica_DeviceDrivers.Utilities.Icons.BaseIcon;
       extends
         Modelica_DeviceDrivers.Utilities.Icons.PartialClockedDeviceDriverIcon;
       extends Modelica_DeviceDrivers.Utilities.Icons.LinuxTuxBlockIcon;
       Modelica.Blocks.Interfaces.RealInput    u
         annotation (Placement(transformation(extent={{-140,-20},{-100,20}})));
+      import Modelica_DeviceDrivers.ClockedBlocks.HardwareIO.Comedi.Types;
       import Modelica_DeviceDrivers.HardwareIO.Comedi;
 
       parameter Comedi comedi "Handle to comedi device";
       parameter Integer subDevice=1 "Subdevice";
       parameter Integer channel=0 "Channel";
       parameter Integer range=0 "Range";
-      parameter Types.Aref aref=Types.Aref.AREF_GROUND "(ground) Reference to use";
+      parameter
+        Modelica_DeviceDrivers.ClockedBlocks.HardwareIO.Comedi.Types.Aref         aref=Types.Aref.AREF_GROUND
+        "(ground) Reference to use";
     protected
       Real min "Minimal physical value of channel";
       Real max "Maximal physical value of channel";
-      Types.ConverterUnit converterUnit "Physical unit type (volts or milliamps)";
+      Modelica_DeviceDrivers.ClockedBlocks.HardwareIO.Comedi.Types.ConverterUnit
+                                                                                 converterUnit
+        "Physical unit type (volts or milliamps)";
       Integer maxData "Maximal Integer raw value of DAC channel";
       Integer rawData "Raw value written to DAC channel";
       Integer cUnit;
@@ -135,27 +149,27 @@ package HardwareIO
      Problem: Not granted that initialization is executed before first "when Clock()" */
       if (not initialized) then
         (min, max, cUnit) :=Modelica_DeviceDrivers.HardwareIO.Comedi_.get_range(
-          comedi, subDevice, channel, range);
+                                             comedi, subDevice, channel, range);
         converterUnit :=cUnit + 1; // convert magic int to readable Modelica enumeration value
         maxData :=Modelica_DeviceDrivers.HardwareIO.Comedi_.get_maxdata(
-          comedi, subDevice, channel);
+                                     comedi, subDevice, channel);
         initialized :=true;
       end if;
     equation
       when Clock() then
         rawData = Modelica_DeviceDrivers.HardwareIO.Comedi_.from_phys(
-          u, min, max, cUnit, maxData);
+                                   u, min, max, cUnit, maxData);
         Modelica_DeviceDrivers.HardwareIO.Comedi_.data_write(
-          comedi, subDevice, channel, range, if aref==Types.Aref.AREF_GROUND then 0 elseif aref==Types.Aref.AREF_COMMON then 1 elseif aref==Types.Aref.AREF_DIFF then 2 else 3, rawData);
+                          comedi, subDevice, channel, range, aref - 1,  rawData);
       end when;
 
       annotation (defaultComponentName="dataWrite",
               preferredView="info",
-              Icon(graphics={Text(extent={{-222,
+              Icon(graphics={                                       Text(extent={{-222,
                   88},{222,58}},
-              textString="Subdevice: %subDevice"), Text(extent={{-222,
+              textString="Subdevice: %subDevice"),                  Text(extent={{-222,
                   54},{222,24}},
-              textString="Channel: %channel"), Text(extent={{-220,
+              textString="Channel: %channel"),                      Text(extent={{-220,
                   -104},{224,-134}},
               textString="Device: %comedi"), Text(extent={{-150,142},{150,102}},
                 textString="%name")}),
@@ -169,23 +183,28 @@ package HardwareIO
 
     block PhysicalDataRead
       "Read physical value (in volts or milliamps) from Comedi ADC channel"
+      import Modelica_DeviceDrivers;
       extends Modelica_DeviceDrivers.Utilities.Icons.BaseIcon;
       extends
         Modelica_DeviceDrivers.Utilities.Icons.PartialClockedDeviceDriverIcon;
       extends Modelica_DeviceDrivers.Utilities.Icons.LinuxTuxBlockIcon;
+      import Modelica_DeviceDrivers.ClockedBlocks.HardwareIO.Comedi.Types;
       import Modelica_DeviceDrivers.HardwareIO.Comedi;
 
       parameter Comedi comedi "Handle to comedi device";
       parameter Integer subDevice=0 "Subdevice";
       parameter Integer channel=0 "Channel";
       parameter Integer range=0 "Range";
-      parameter Types.Aref aref=Types.Aref.AREF_GROUND "(ground) Reference to use";
+      parameter
+        Modelica_DeviceDrivers.ClockedBlocks.HardwareIO.Comedi.Types.Aref aref=Types.Aref.AREF_GROUND
+        "(ground) Reference to use";
       Modelica.Blocks.Interfaces.RealOutput    y
         annotation (Placement(transformation(extent={{100,-10},{120,10}})));
     protected
       Real min "Minimal physical value of channel";
       Real max "Maximal physical value of channel";
-      Types.ConverterUnit converterUnit "Physical unit type (volts or milliamps)";
+      Modelica_DeviceDrivers.ClockedBlocks.HardwareIO.Comedi.Types.ConverterUnit
+        converterUnit "Physical unit type (volts or milliamps)";
       Integer maxData "Maximal Integer raw value of DAC channel";
       Integer rawData "Raw value read from ADC channel";
       Integer cUnit;
@@ -197,26 +216,26 @@ package HardwareIO
      Problem: Not granted that initialization is executed before first "when Clock()" */
       if (not initialized) then
         (min, max, cUnit) :=Modelica_DeviceDrivers.HardwareIO.Comedi_.get_range(
-          comedi, subDevice, channel, range);
+                                             comedi, subDevice, channel, range);
         converterUnit :=cUnit + 1; // convert magic int to readable Modelica enumeration value
         maxData :=Modelica_DeviceDrivers.HardwareIO.Comedi_.get_maxdata(
-          comedi, subDevice, channel);
+                                     comedi, subDevice, channel);
         initialized :=true;
       end if;
     equation
       when Clock() then
-        rawData =  Modelica_DeviceDrivers.HardwareIO.Comedi_.data_read(
-          comedi, subDevice, channel, range, if aref==Types.Aref.AREF_GROUND then 0 elseif aref==Types.Aref.AREF_COMMON then 1 elseif aref==Types.Aref.AREF_DIFF then 2 else 3);
-         y =  Modelica_DeviceDrivers.HardwareIO.Comedi_.to_phys(
-           rawData, min, max, cUnit, maxData);
+       rawData =  Modelica_DeviceDrivers.HardwareIO.Comedi_.data_read(
+                                   comedi, subDevice, channel, range, aref - 1);
+       y =  Modelica_DeviceDrivers.HardwareIO.Comedi_.to_phys(
+                           rawData, min, max, cUnit, maxData);
       end when;
       annotation (defaultComponentName="dataRead",
               preferredView="info",
-              Icon(graphics={Text(extent={{-222,
+              Icon(graphics={                                       Text(extent={{-222,
                   88},{222,58}},
-              textString="Subdevice: %subDevice"), Text(extent={{-222,
+              textString="Subdevice: %subDevice"),                  Text(extent={{-222,
                   54},{222,24}},
-              textString="Channel: %channel"), Text(extent={{-220,
+              textString="Channel: %channel"),                      Text(extent={{-220,
                   -104},{224,-134}},
               textString="Device: %comedi"), Text(extent={{-152,142},{148,102}},
                 textString="%name")}),        Documentation(info="<html>
@@ -228,12 +247,14 @@ package HardwareIO
     end PhysicalDataRead;
 
     block DIOWrite "Write value to Comedi DIO channel"
+      import Modelica_DeviceDrivers;
       extends Modelica_DeviceDrivers.Utilities.Icons.BaseIcon;
       extends
         Modelica_DeviceDrivers.Utilities.Icons.PartialClockedDeviceDriverIcon;
       extends Modelica_DeviceDrivers.Utilities.Icons.LinuxTuxBlockIcon;
       Modelica.Blocks.Interfaces.BooleanInput u
         annotation (Placement(transformation(extent={{-140,-20},{-100,20}})));
+      import Modelica_DeviceDrivers.ClockedBlocks.HardwareIO.Comedi.Types;
       import Modelica_DeviceDrivers.HardwareIO.Comedi;
 
       parameter Comedi comedi "Handle to comedi device";
@@ -245,22 +266,22 @@ package HardwareIO
 
       if (not initialized) then
         Modelica_DeviceDrivers.HardwareIO.Comedi_.dio_config(
-          comedi, subDevice, channel, 1);
+                          comedi, subDevice, channel, 1);
         initialized :=true;
       else
         initialized :=previous(initialized);
       end if;
 
       Modelica_DeviceDrivers.HardwareIO.Comedi_.dio_write(
-        comedi, subDevice, channel, u);
+                       comedi, subDevice, channel, u);
 
       annotation (defaultComponentName="dioWrite",
               preferredView="info",
-              Icon(graphics={Text(extent={{-222,
+              Icon(graphics={                                       Text(extent={{-222,
                   88},{222,58}},
-              textString="Subdevice: %subDevice"), Text(extent={{-222,
+              textString="Subdevice: %subDevice"),                  Text(extent={{-222,
                   54},{222,24}},
-              textString="Channel: %channel"), Text(extent={{-220,
+              textString="Channel: %channel"),                      Text(extent={{-220,
                   -104},{224,-134}},
               textString="Device: %comedi"), Text(extent={{-150,142},{150,102}},
                 textString="%name")}),
@@ -273,10 +294,12 @@ package HardwareIO
     end DIOWrite;
 
     block DIORead "Read value from Comedi DIO channel"
+      import Modelica_DeviceDrivers;
       extends Modelica_DeviceDrivers.Utilities.Icons.BaseIcon;
       extends
         Modelica_DeviceDrivers.Utilities.Icons.PartialClockedDeviceDriverIcon;
       extends Modelica_DeviceDrivers.Utilities.Icons.LinuxTuxBlockIcon;
+      import Modelica_DeviceDrivers.ClockedBlocks.HardwareIO.Comedi.Types;
       import Modelica_DeviceDrivers.HardwareIO.Comedi;
 
       parameter Comedi comedi "Handle to comedi device";
@@ -292,22 +315,22 @@ package HardwareIO
 
       if (not initialized) then
         Modelica_DeviceDrivers.HardwareIO.Comedi_.dio_config(
-          comedi, subDevice, channel, 0);
+                          comedi, subDevice, channel, 0);
         initialized :=true;
       else
         initialized :=previous(initialized);
       end if;
 
       y := Modelica_DeviceDrivers.HardwareIO.Comedi_.dio_read(
-        comedi, subDevice, channel);
+                           comedi, subDevice, channel);
 
       annotation (defaultComponentName="dioRead",
               preferredView="info",
-              Icon(graphics={Text(extent={{-222,
+              Icon(graphics={                                       Text(extent={{-222,
                   88},{222,58}},
-              textString="Subdevice: %subDevice"), Text(extent={{-222,
+              textString="Subdevice: %subDevice"),                  Text(extent={{-222,
                   54},{222,24}},
-              textString="Channel: %channel"), Text(extent={{-220,
+              textString="Channel: %channel"),                      Text(extent={{-220,
                   -104},{224,-134}},
               textString="Device: %comedi"), Text(extent={{-150,142},{150,102}},
                 textString="%name")}),
@@ -320,10 +343,10 @@ package HardwareIO
     end DIORead;
 
     package Types "Types used within the HardwareIO package"
-      extends Modelica.Icons.TypesPackage;
+      extends Modelica.Icons.Package;
       type Aref = enumeration(
-          AREF_GROUND "analog ref = ground",
-          AREF_COMMON "analog ref = common",
+          AREF_GROUND "analog ref = analog ground",
+          AREF_COMMON "analog ref = analog ground",
           AREF_DIFF "analog ref = differential",
           AREF_OTHER "analog ref = other (undefined)")
         "Choices for channel reference"

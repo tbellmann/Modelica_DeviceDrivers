@@ -15,7 +15,8 @@ package Interfaces
           initialScale=0.2), graphics={Rectangle(
             extent={{-100,40},{100,-40}},
             fillColor={255,255,0},
-            fillPattern=FillPattern.Sphere),
+            fillPattern=FillPattern.Sphere,
+            pattern=LinePattern.None),
           Line(
             points={{-100,-40},{0,40},{100,-40}},
             color={95,95,95}),
@@ -37,7 +38,8 @@ package Interfaces
           initialScale=0.2), graphics={Rectangle(
             extent={{-100,40},{100,-40}},
             fillColor={255,255,0},
-            fillPattern=FillPattern.Sphere),
+            fillPattern=FillPattern.Sphere,
+            pattern=LinePattern.None),
           Line(
             points={{-100,40},{0,-40},{100,40}},
             color={95,95,95}),
@@ -56,7 +58,8 @@ package Interfaces
           initialScale=0.2), graphics={Rectangle(
             extent={{-100,40},{100,-40}},
             fillColor={200,200,200},
-            fillPattern=FillPattern.Sphere),
+            fillPattern=FillPattern.Sphere,
+            pattern=LinePattern.None),
           Line(
             points={{-100,40},{0,-40},{100,40}},
             color={95,95,95}),
@@ -75,7 +78,8 @@ package Interfaces
           initialScale=0.2), graphics={Rectangle(
             extent={{-100,40},{100,-40}},
             fillColor={200,200,200},
-            fillPattern=FillPattern.Sphere),
+            fillPattern=FillPattern.Sphere,
+            pattern=LinePattern.None),
           Line(
             points={{-100,-40},{0,40},{100,-40}},
             color={95,95,95}),
@@ -94,6 +98,6 @@ package Interfaces
             extent={{-142,100},{148,58}},
             textString="%name"),           Bitmap(extent={{-40,-16},{40,-96}},
               fileName=
-                "modelica://Modelica_DeviceDrivers/Resources/Images/Icons/package.png")}));
+                "modelica://Modelica_DeviceDrivers/Resources/Images/Icons/package.PNG")}));
   end PartialSoftingCANMessage;
 end Interfaces;

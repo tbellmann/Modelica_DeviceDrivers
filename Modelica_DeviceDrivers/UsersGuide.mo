@@ -48,11 +48,8 @@ that have no support for the synchronous language elements.
 </p>
 <h4>Modelica tools known to work with that library</h4>
 <p>
-Currently, (2015-09-01) the library is known to work with Dymola
-(preferable Dymola 2013FD01 and later) and with SimulationX
-(with userBufferSize all non-clocked communication blocks are working
-in SimulationX, but autoBufferSize only works for external solvers
-CVode and Fixed Step solver and fails for BDF and MEBDF solvers.
+The library was tested with Dymola 2013 and a prototype of Dymola supporting the \"Synchrchronous Language Elements\" (see above).
+The library is known to work only partly with Dymola 2012FD0, due to a bug in handling external objects in that Dymola version.
 </p>
 </html>"));
   end Requirements;
@@ -138,26 +135,6 @@ First public version of the library.
 </ul>
 </html>"));
     end Version_1_3;
-
-    class Version_1_4_0 "Version 1.4.0 (Sep 01, 2015)"
-      extends Modelica.Icons.ReleaseNotes;
-
-      annotation (Documentation(info="<html>
-<ul>
-<li>Switched to <a href=\"http://semver.org/\">semantic versioning</a>.</li>
-<li>Migrated to new release process motivated by <a href=\"https://github.com/xogeny/impact/blob/master/resources/docs/modelica2015/paper/impact.md#impact-on-library-developers\">impact-on-library-developers</a>.</li>
-<li>Added support for external trigger signals to trigger communication blocks.</li>
-<li>Added support to configure byte ordering in communication blocks.</li>
-<li>Added support for TCP/IP communication for Windows.</li>
-<li>Added serial port support for Windows (was already available for Linux).</li>
-<li>Added compiler support for MinGW and Cygwin.</li>
-<li>Added support for all 32 joystick buttons.</li>
-<li>Fixed Modelica compatibility of output buffers in communication blocks.</li>
-<li>Fixed multi-threaded access of UDP and shared memory communication for Windows.</li>
-<li>Fixed many small issues, particularly for improved compatibility with SimulationX.</li>
-</ul>
-</html>"));
-    end Version_1_4_0;
     annotation (Documentation(info="<html>
 <p>
 This section summarizes the changes that have been performed
@@ -822,7 +799,7 @@ of the library:
                     Communication.SerialPort_</td>
 </tr>
 <tr><td valign=\"top\"><b><a href=\"https://github.com/tbeu/\">tbeu</a></b> </td>
-   <td valign=\"top\">&nbsp;</td>
+   <td valign=\"top\"></td>
    <td valign=\"top\"> Many fixes and good proposals, especially regarding the SimulationX support.</td>
 </tr>
 
@@ -830,7 +807,7 @@ of the library:
 </html>"));
   end Contact;
 
-  annotation (DocumentationClass=true, Documentation(info="<html>
+  annotation (__Dymola_DocumentationClass=true, Documentation(info="<html>
 <p>
 Library <b>Modelica_DeviceDrivers</b> is a Modelica package
 that interfaces hardware drivers. This package contains the <b>user's guide</b> for

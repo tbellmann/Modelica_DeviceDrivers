@@ -1,6 +1,6 @@
 within Modelica_DeviceDrivers.Utilities;
 package Types "Custom type definitions"
-  extends Modelica.Icons.TypesPackage;
+  extends Modelica.Icons.Package;
   type SignalType = enumeration(
       integer "Integer value",
       float "IEEE float value",
@@ -27,7 +27,4 @@ package Types "Custom type definitions"
       B9600 "9600 baud",
       B4800 "4800 baud",
       B2400 "2400 baud") "Baud rate of serial device";
-  type ByteOrder = enumeration(
-      LE "Little endian",
-      BE "Big endian") "Byte order";
 end Types;

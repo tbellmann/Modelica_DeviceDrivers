@@ -4,21 +4,22 @@ package Communication
   model SharedMemoryRead "A block for reading data from a shared memory buffer"
     extends Modelica_DeviceDrivers.Utilities.Icons.BaseIcon;
     extends Modelica_DeviceDrivers.Utilities.Icons.SharedMemoryIcon;
-    extends Modelica_DeviceDrivers.Utilities.Icons.PartialClockedDeviceDriverIcon;
+    extends
+      Modelica_DeviceDrivers.Utilities.Icons.PartialClockedDeviceDriverIcon;
     import Modelica_DeviceDrivers.Packaging.SerialPackager;
-    import Modelica_DeviceDrivers.Packaging.alignAtByteBoundary;
+    import Modelica_DeviceDrivers.Packaging.alignAtByteBoundery;
     import Modelica_DeviceDrivers.Communication.SharedMemory;
     import Modelica_DeviceDrivers.Communication.SharedMemory_;
 
     parameter Boolean autoBufferSize = false
       "true, buffer size is deduced automatically, otherwise set it manually"
-      annotation(Dialog(group="Shared memory partition"), choices(checkBox=true));
+      annotation(Dialog(group="Shared memory partition"), choices(__Dymola_checkBox=true));
     parameter Integer userBufferSize=16*1024
       "Buffer size of shared memory partition in bytes (if not deduced automatically)"
-      annotation(Dialog(enable=not autoBufferSize, group="Shared memory partition"));
+                                                                                       annotation(Dialog(enable=not autoBufferSize, group="Shared memory partition"));
     parameter String memoryID="sharedMemory" "ID of the shared memory buffer" annotation(Dialog(group="Shared memory partition"));
 
-    Interfaces.PackageOut pkgOut annotation (Placement(
+    Interfaces.PackageOut pkgOut                           annotation (Placement(
           transformation(
           extent={{-20,-20},{20,20}},
           rotation=90,
@@ -33,7 +34,7 @@ package Communication
   equation
 
     if not previous(initialized) then
-      bufferSize = if autoBufferSize then alignAtByteBoundary(pkgOut.autoPkgBitSize)
+      bufferSize = if autoBufferSize then alignAtByteBoundery(pkgOut.autoPkgBitSize)
          else userBufferSize;
       pkgOut.pkg = SerialPackager(bufferSize);
       sm = SharedMemory(memoryID,bufferSize);
@@ -46,9 +47,10 @@ package Communication
     end if;
 
     dummy = previous(dummy) + Ts;
-    pkgOut.dummy = Modelica_DeviceDrivers.ClockedBlocks.Communication.Internal.DummyFunctions.readSharedMemory(
-      sm,
+    pkgOut.dummy = Modelica_DeviceDrivers.Blocks.Packaging.SerialPackager.Internal.DummyFunctions.setPackage(
       pkgOut.pkg,
+      SharedMemory_.read(sm),
+      bufferSize,
       dummy);
       annotation (preferredView="info",
                 Icon(coordinateSystem(preserveAspectRatio=false, extent={{-100,
@@ -71,13 +73,13 @@ provided by the parameter <b>memoryID</b>. If the shared memory partition does n
 
     parameter Boolean autoBufferSize = false
       "true, buffer size is deduced automatically, otherwise set it manually"
-      annotation(Dialog(group="Shared memory partition"), choices(checkBox=true));
+      annotation(Dialog(group="Shared memory partition"), choices(__Dymola_checkBox=true));
     parameter Integer userBufferSize=16*1024
       "Buffer size of shared memory partition in bytes (if not deduced automatically)"
-      annotation(Dialog(enable=not autoBufferSize, group="Shared memory partition"));
+                                                                                       annotation(Dialog(enable=not autoBufferSize, group="Shared memory partition"));
     parameter String memoryID="sharedMemory" "ID of the shared memory buffer" annotation(Dialog(group="Shared memory partition"));
 
-    Interfaces.PackageIn pkgIn annotation (Placement(
+    Interfaces.PackageIn pkgIn                           annotation (Placement(
           transformation(
           extent={{-20,-20},{20,20}},
           rotation=270,
@@ -98,12 +100,16 @@ provided by the parameter <b>memoryID</b>. If the shared memory partition does n
       initialized :=previous(initialized);
     end if;
   equation
-    pkgIn.userPkgBitSize = if autoBufferSize then -1 else userBufferSize*8;
-    pkgIn.autoPkgBitSize = 0;
-    bufferSize = if autoBufferSize then Modelica_DeviceDrivers.Packaging.SerialPackager_.getBufferSize(pkgIn.pkg) else userBufferSize;
-    dummy = Modelica_DeviceDrivers.ClockedBlocks.Communication.Internal.DummyFunctions.writeSharedMemory(
+    pkgIn.userPkgBitSize =  if autoBufferSize then -1 else userBufferSize*8;
+    pkgIn.autoPkgBitSize =  0;
+    bufferSize =  if autoBufferSize then Modelica_DeviceDrivers.Packaging.SerialPackager_.getBufferSize(
+                                                                      pkgIn.pkg)
+       else userBufferSize;
+    dummy =
+      Modelica_DeviceDrivers.ClockedBlocks.Communication.Internal.DummyFunctions.writeSharedMemory(
       sm,
-      pkgIn.pkg,
+      Modelica_DeviceDrivers.Packaging.SerialPackager_.getPackage(
+                                pkgIn.pkg),
       bufferSize,
       pkgIn.dummy);
 
@@ -122,12 +128,12 @@ provided by the parameter <b>memoryID</b>. If the shared memory partition does n
     extends
       Modelica_DeviceDrivers.Utilities.Icons.PartialClockedDeviceDriverIcon;
     import Modelica_DeviceDrivers.Packaging.SerialPackager;
-    import Modelica_DeviceDrivers.Packaging.alignAtByteBoundary;
+    import Modelica_DeviceDrivers.Packaging.alignAtByteBoundery;
     import Modelica_DeviceDrivers.Communication.UDPSocket;
 
     parameter Boolean autoBufferSize = true
       "true, buffer size is deduced automatically, otherwise set it manually"
-      annotation(Dialog(group="Incoming data"), choices(checkBox=true));
+      annotation(Dialog(group="Incoming data"), choices(__Dymola_checkBox=true));
     parameter Integer userBufferSize=16*1024
       "Buffer size of message data in bytes (if not deduced automatically)" annotation(Dialog(enable=not autoBufferSize, group="Incoming data"));
     parameter Integer port_recv=10001
@@ -149,7 +155,7 @@ provided by the parameter <b>memoryID</b>. If the shared memory partition does n
   equation
 
     if not previous(initialized) then
-      bufferSize = if autoBufferSize then alignAtByteBoundary(pkgOut.autoPkgBitSize)
+      bufferSize = if autoBufferSize then alignAtByteBoundery(pkgOut.autoPkgBitSize)
          else userBufferSize;
       pkgOut.pkg = SerialPackager(bufferSize);
   //    Modelica.Utilities.Streams.print("Open Socket "+String(port_recv)+" with bufferSize "+String(bufferSize));
@@ -164,9 +170,11 @@ provided by the parameter <b>memoryID</b>. If the shared memory partition does n
 
     dummy = previous(dummy) + Ts;
 
-    pkgOut.dummy = Modelica_DeviceDrivers.ClockedBlocks.Communication.Internal.DummyFunctions.readUDP(
-      socket,
+    pkgOut.dummy =
+      Modelica_DeviceDrivers.ClockedBlocks.Packaging.SerialPackager.Internal.DummyFunctions.setPackage(
       pkgOut.pkg,
+      Modelica_DeviceDrivers.Communication.UDPSocket_.read(socket),
+      bufferSize,
       dummy);
 
     annotation (preferredView="info",
@@ -188,15 +196,15 @@ provided by the parameter <b>memoryID</b>. If the shared memory partition does n
 
     parameter Boolean autoBufferSize = true
       "true, buffer size is deduced automatically, otherwise set it manually."
-      annotation(Dialog(group="Outgoing data"), choices(checkBox=true));
+      annotation(Dialog(group="Outgoing data"), choices(__Dymola_checkBox=true));
     parameter Integer userBufferSize=16*1024
       "Buffer size of message data in bytes (if not deduced automatically)." annotation(Dialog(enable=not autoBufferSize, group="Outgoing data"));
     parameter String IPAddress="127.0.0.1" "IP address of remote UDP server"
-      annotation (Dialog(group="Outgoing data"));
+        annotation (Dialog(group="Outgoing data"));
     parameter Integer port_send=10002 "Target port of the receiving UDP server"
-      annotation (Dialog(group="Outgoing data"));
+        annotation (Dialog(group="Outgoing data"));
 
-    Interfaces.PackageIn pkgIn annotation (Placement(
+    Interfaces.PackageIn pkgIn                           annotation (Placement(
           transformation(
           extent={{-20,-20},{20,20}},
           rotation=270,
@@ -210,15 +218,19 @@ provided by the parameter <b>memoryID</b>. If the shared memory partition does n
 
       pkgIn.userPkgBitSize = if autoBufferSize then -1 else userBufferSize*8;
       pkgIn.autoPkgBitSize = 0;
-      bufferSize = if autoBufferSize then Modelica_DeviceDrivers.Packaging.SerialPackager_.getBufferSize(pkgIn.pkg) else userBufferSize;
+      bufferSize = if autoBufferSize then Modelica_DeviceDrivers.Packaging.SerialPackager_.getBufferSize(
+                                                                       pkgIn.pkg)
+         else userBufferSize;
 
   //    socket = previous(socket);
 
-    dummy = Modelica_DeviceDrivers.ClockedBlocks.Communication.Internal.DummyFunctions.sendToUDP(
+    dummy =
+      Modelica_DeviceDrivers.ClockedBlocks.Communication.Internal.DummyFunctions.sendToUDP(
       socket,
       IPAddress,
       port_send,
-      pkgIn.pkg,
+      Modelica_DeviceDrivers.Packaging.SerialPackager_.getPackage(
+                                pkgIn.pkg),
       bufferSize,
       pkgIn.dummy);
 
@@ -231,53 +243,35 @@ provided by the parameter <b>memoryID</b>. If the shared memory partition does n
   end UDPSend;
 
   package Internal
-    extends Modelica.Icons.InternalPackage;
+    extends Modelica_DeviceDrivers.Utilities.Icons.InternalPackage;
     package DummyFunctions
       extends Modelica_DeviceDrivers.Utilities.Icons.InternalPackage;
-      function readSharedMemory
-        input Modelica_DeviceDrivers.Communication.SharedMemory sm;
-        input Modelica_DeviceDrivers.Packaging.SerialPackager pkg;
-        input Real dummy;
-        output Real dummy2;
-      algorithm
-        Modelica_DeviceDrivers.Communication.SharedMemory_.read(sm, pkg);
-        dummy2 := dummy;
-      end readSharedMemory;
-
       function writeSharedMemory
         input Modelica_DeviceDrivers.Communication.SharedMemory sm;
-        input Modelica_DeviceDrivers.Packaging.SerialPackager pkg;
+        input String data;
         input Integer len;
         input Real dummy;
         output Real dummy2;
       algorithm
-        Modelica_DeviceDrivers.Communication.SharedMemory_.write(sm, pkg, len);
-        dummy2 := dummy;
+        Modelica_DeviceDrivers.Communication.SharedMemory_.write(
+                                                                sm,data,len);
+        dummy2 :=dummy;
       end writeSharedMemory;
 
-      function readUDP
-        input Modelica_DeviceDrivers.Communication.UDPSocket socket;
-        input Modelica_DeviceDrivers.Packaging.SerialPackager pkg;
-        input Real dummy;
-        output Real dummy2;
-      algorithm
-        Modelica_DeviceDrivers.Communication.UDPSocket_.read(socket, pkg);
-        dummy2 := dummy;
-      end readUDP;
-
       function sendToUDP
-        input Modelica_DeviceDrivers.Communication.UDPSocket socket;
+        import Modelica_DeviceDrivers.Communication.UDPSocket;
+        input UDPSocket socket;
         input String ipAddress "IP address where data has to be sent";
         input Integer port "Port number where data has to be sent";
-        input Modelica_DeviceDrivers.Packaging.SerialPackager pkg;
+        input String data "Data to be sent";
         input Integer dataSize "Size of data";
         input Real dummy;
         output Real dummy2;
       algorithm
-        Modelica_DeviceDrivers.Communication.UDPSocket_.sendTo(socket, ipAddress, port, pkg, dataSize);
-        dummy2 := dummy;
+        Modelica_DeviceDrivers.Communication.UDPSocket_.sendTo(
+                                                              socket, ipAddress, port,data, dataSize);
+        dummy2 :=dummy;
       end sendToUDP;
-
     end DummyFunctions;
 
   end Internal;

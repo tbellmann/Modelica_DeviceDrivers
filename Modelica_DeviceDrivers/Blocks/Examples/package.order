@@ -1,12 +1,8 @@
 TestSerialPackager
 TestSerialPackager_String
-TestSerialPackager_ExternalTrigger
 TestSerialPackager_UDP
-TestSerialPackager_UDPExternalTrigger
-TestSerialPackager_UDPAutoBufferSize
 TestSerialPackagerBitPack_UDP
 TestSerialPackager_SharedMemory
-TestSerialPackager_SharedMemoryExternalTrigger
 TestSerialPackager_SoftingCAN
 TestSerialPackager_SocketCAN
 TestSerialPackager_SerialPort
@@ -15,4 +11,5 @@ TestInputJoystick
 TestInputKeyboard
 TestInputKeyboardKey
 TestHardwareIOComedi
-TestSerialPackager_TCPIP
+TestTimestamp
+TestSerialPackager_TCP

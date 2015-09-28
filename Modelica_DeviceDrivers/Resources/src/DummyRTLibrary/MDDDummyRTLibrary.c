@@ -1,7 +1,8 @@
 /** Dummy library for uniform treatment of Modelica external function in windows and linux.
  *
  * @file
- * @author		bernhard-thiele
+ * @author		Bernhard Thiele <bernhard.thiele@dlr.de>
+ * @version	$Id$
  * @since		2012-05-25
  * @copyright Modelica License 2
  * For linux, various functions need to link the librt library (POSIX.1b Realtime Extensions library).

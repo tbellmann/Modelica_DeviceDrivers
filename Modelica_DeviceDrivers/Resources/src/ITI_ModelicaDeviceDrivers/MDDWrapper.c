@@ -1,7 +1,7 @@
 /** DLLWrapper library - Library wrapping most of the device driver interface functions into one dynamic link library.
  *
  * @file
- * @author	bernhard-thiele
+ * @author		Bernhard Thiele <bernhard.thiele@dlr.de>
  * @since		2014-04-11
  * @copyright Modelica License 2
  *
@@ -15,7 +15,7 @@
  * This file just includes most (but not all) of the provided header-only files
  * in order to wrap them into one DLL.
  *
- * In the moment, some files have been omitted, since they might require some extra considerations.
+ * In the moment, some files have been omited, since they might require some extra considerations.
  *
 */
 #include "../../Include/MDDBeep.h"
@@ -24,8 +24,6 @@
 #include "../../Include/MDDOperatingSystem.h"
 #include "../../Include/MDDRealtimeSynchronize.h"
 #include "../../Include/MDDSerialPackager.h"
-#include "../../Include/MDDSerialPort.h"
 #include "../../Include/MDDSharedMemory.h"
 #include "../../Include/MDDUDPSocket.h"
 #include "../../Include/MDDUtilities.h"
-#include "../../Include/MDDTCPIPSocket.h"

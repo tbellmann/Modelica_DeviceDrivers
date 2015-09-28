@@ -1,7 +1,8 @@
 /** @brief Preprocessor definitions supporting compiling Windows and Linux sources from same source.
  *
  * @file        CompatibilityDefs.h
- * @author	bernhard-thiele
+ * @author	Bernhard Thiele <bernhard.thiele@dlr.de>
+ * @version	$Id$
  * @since	2012-05-25
  * @copyright Modelica License 2
  *
@@ -38,7 +39,7 @@
 #define COMPATIBILITYDEFS_H_
 
 /* Compile dll and so from same source */
-#if defined(_MSC_VER) && !defined(ITI_CE_EXEC_MODEL)
+#if defined(_MSC_VER)
 # define DllImport \
 __declspec( dllimport )
 # define DllExport \
@@ -62,5 +63,7 @@ __declspec( dllexport )
   typedef unsigned long   u_long;
   typedef unsigned __int64 u_int64;
 #endif /*_MSC_VER */
+
+
 
 #endif /* COMPATIBILITYDEFS_H_ */

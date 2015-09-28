@@ -37,22 +37,29 @@ equation
       points={{-69,12},{-54,12}},
       color={255,127,0}));
   connect(packager.pkgOut, packInt.pkgIn) annotation (Line(
-      points={{-42,41.2},{-42,22.8}}));
+      points={{-42,41.2},{-42,22.8}},
+      pattern=LinePattern.None));
   connect(integerExpression2.y, addInteger.u[1]) annotation (Line(
       points={{-69,-48},{-54,-48}},
       color={255,127,0}));
   connect(resetPointer.pkgOut[1], unpackInt.pkgIn) annotation (Line(
-      points={{6,37.2},{6,24.8}}));
+      points={{6,37.2},{6,24.8}},
+      pattern=LinePattern.None));
   connect(addString.pkgOut[1], addInteger.pkgIn) annotation (Line(
-      points={{-42,-28.8},{-42,-37.2}}));
+      points={{-42,-28.8},{-42,-37.2}},
+      pattern=LinePattern.None));
   connect(packInt.pkgOut[1], addString.pkgIn) annotation (Line(
-      points={{-42,1.2},{-42,-7.2}}));
+      points={{-42,1.2},{-42,-7.2}},
+      pattern=LinePattern.None));
   connect(unpackInt.pkgOut[1], getString.pkgIn) annotation (Line(
-      points={{6,3.2},{6,-7.2}}));
+      points={{6,3.2},{6,-7.2}},
+      pattern=LinePattern.None));
   connect(getString.pkgOut[1], getInteger.pkgIn) annotation (Line(
-      points={{6,-28.8},{6,-37.2}}));
+      points={{6,-28.8},{6,-37.2}},
+      pattern=LinePattern.None));
   connect(addInteger.pkgOut[1], resetPointer.pkgIn) annotation (Line(
-      points={{-42,-58.8},{-42,-64},{-20,-64},{-20,66},{6,66},{6,58.8}}));
+      points={{-42,-58.8},{-42,-66},{-12,-66},{-12,66},{6,66},{6,58.8}},
+      pattern=LinePattern.None));
   annotation (Diagram(coordinateSystem(preserveAspectRatio=false,extent={{-100,
             -100},{100,100}}), graphics={Text(
           extent={{-82,84},{82,68}},

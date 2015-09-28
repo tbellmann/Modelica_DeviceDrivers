@@ -7,137 +7,104 @@ package Examples
   extends Modelica.Icons.Example;
     Modelica.Blocks.Sources.IntegerExpression integerExpression(y=integer(3*sin(
           time) + 3))
-      annotation (Placement(transformation(extent={{-100,36},{-80,56}})));
+      annotation (Placement(transformation(extent={{-100,30},{-80,50}})));
     ClockedBlocks.Packaging.SerialPackager.Packager packager
-      annotation (Placement(transformation(extent={{-50,76},{-30,96}})));
+      annotation (Placement(transformation(extent={{-50,70},{-30,90}})));
     ClockedBlocks.Packaging.SerialPackager.PackUnsignedInteger packInt(nu=1, width=10)
-      annotation (Placement(transformation(extent={{-50,36},{-30,56}})));
+      annotation (Placement(transformation(extent={{-50,30},{-30,50}})));
     ClockedBlocks.Packaging.SerialPackager.AddInteger addInteger(nu=1)
-      annotation (Placement(transformation(extent={{-50,-22},{-30,-2}})));
+      annotation (Placement(transformation(extent={{-50,-46},{-30,-26}})));
     Modelica.Blocks.Sources.IntegerExpression integerExpression2(y=integer(5*sin(
           time)))
-      annotation (Placement(transformation(extent={{-100,-22},{-80,-2}})));
+      annotation (Placement(transformation(extent={{-100,-46},{-80,-26}})));
     Modelica.Blocks.Sources.IntegerExpression integerExpression1(y=integer(5*sin(
           time) + 5))
-      annotation (Placement(transformation(extent={{-100,8},{-80,28}})));
+      annotation (Placement(transformation(extent={{-100,-8},{-80,12}})));
     ClockedBlocks.Packaging.SerialPackager.PackUnsignedInteger packInt1(
       nu=1,
       bitOffset=5,
       width=10)
-      annotation (Placement(transformation(extent={{-50,8},{-30,28}})));
+      annotation (Placement(transformation(extent={{-50,-8},{-30,12}})));
     ClockedBlocks.Packaging.SerialPackager.ResetPointer resetPointer(nu=1)
-      annotation (Placement(transformation(extent={{26,72},{46,92}})));
+      annotation (Placement(transformation(extent={{26,66},{46,86}})));
     ClockedBlocks.Packaging.SerialPackager.UnpackUnsignedInteger unpackInt(nu=1, width=10)
-      annotation (Placement(transformation(extent={{26,38},{46,58}})));
-    ClockedBlocks.Packaging.SerialPackager.GetInteger getInteger(nu=1)
-      annotation (Placement(transformation(extent={{26,-18},{46,2}})));
+      annotation (Placement(transformation(extent={{26,32},{46,52}})));
+    ClockedBlocks.Packaging.SerialPackager.GetInteger getInteger
+      annotation (Placement(transformation(extent={{26,-42},{46,-22}})));
     ClockedBlocks.Packaging.SerialPackager.UnpackUnsignedInteger unpackInt1(
       nu=1,
       bitOffset=5,
-      width=10) annotation (Placement(transformation(extent={{26,12},{46,32}})));
+      width=10) annotation (Placement(transformation(extent={{26,-4},{46,16}})));
     Modelica_Synchronous.IntegerSignals.Sampler.SampleClocked  sample1
-      annotation (Placement(transformation(extent={{-72,40},{-60,52}})));
+      annotation (Placement(transformation(extent={{-72,34},{-60,46}})));
     Modelica_Synchronous.IntegerSignals.Sampler.SampleClocked  sample2
-      annotation (Placement(transformation(extent={{-72,12},{-60,24}})));
+      annotation (Placement(transformation(extent={{-72,-4},{-60,8}})));
     Modelica_Synchronous.IntegerSignals.Sampler.SampleClocked  sample3
-      annotation (Placement(transformation(extent={{-72,-18},{-60,-6}})));
+      annotation (Placement(transformation(extent={{-72,-42},{-60,-30}})));
     Modelica_Synchronous.ClockSignals.Clocks.PeriodicRealClock periodicRealClock(period=
           0.1)
-      annotation (Placement(transformation(extent={{-96,-80},{-82,-66}})));
-    Packaging.SerialPackager.AddBoolean addBoolean(nu=1)
-      annotation (Placement(transformation(extent={{-50,-54},{-30,-34}})));
-    Modelica_Synchronous.BooleanSignals.Sampler.SampleClocked sample4
-      annotation (Placement(transformation(extent={{-72,-50},{-60,-38}})));
-    Modelica.Blocks.Sources.BooleanPulse booleanPulse(period=0.2)
-      annotation (Placement(transformation(extent={{-98,-51},{-84,-37}})));
-    Packaging.SerialPackager.GetBoolean getBoolean
-      annotation (Placement(transformation(extent={{26,-50},{46,-30}})));
+      annotation (Placement(transformation(extent={{-98,-82},{-78,-62}})));
   equation
     connect(packager.pkgOut, packInt.pkgIn) annotation (Line(
-        points={{-40,75.2},{-40,56.8}}));
+        points={{-40,69.2},{-40,50.8}},
+        pattern=LinePattern.None));
     connect(packInt.pkgOut[1], packInt1.pkgIn) annotation (Line(
-        points={{-40,35.2},{-40,28.8}}));
+        points={{-40,29.2},{-40,12.8}},
+        pattern=LinePattern.None));
     connect(packInt1.pkgOut[1], addInteger.pkgIn) annotation (Line(
-        points={{-40,7.2},{-40,-1.2}}));
+        points={{-40,-8.8},{-40,-25.2}},
+        pattern=LinePattern.None));
+    connect(addInteger.pkgOut[1], resetPointer.pkgIn) annotation (Line(
+        points={{-40,-46.8},{-40,-56},{0,-56},{0,94},{36,94},{36,86.8}},
+        pattern=LinePattern.None));
     connect(resetPointer.pkgOut[1], unpackInt.pkgIn) annotation (Line(
-        points={{36,71.2},{36,58.8}}));
+        points={{36,65.2},{36,52.8}},
+        pattern=LinePattern.None));
     connect(unpackInt.pkgOut[1], unpackInt1.pkgIn) annotation (Line(
-        points={{36,37.2},{36,32.8}}));
+        points={{36,31.2},{36,16.8}},
+        pattern=LinePattern.None));
     connect(unpackInt1.pkgOut[1], getInteger.pkgIn) annotation (Line(
-        points={{36,11.2},{36,2.8}}));
+        points={{36,-4.8},{36,-21.2}},
+        pattern=LinePattern.None));
     connect(integerExpression.y, sample1.u) annotation (Line(
-        points={{-79,46},{-73.2,46}},
+        points={{-79,40},{-73.2,40}},
         color={255,127,0}));
     connect(sample1.y, packInt.u) annotation (Line(
-        points={{-59.4,46},{-52,46}},
+        points={{-59.4,40},{-52,40}},
         color={255,127,0}));
     connect(integerExpression1.y, sample2.u) annotation (Line(
-        points={{-79,18},{-73.2,18}},
+        points={{-79,2},{-73.2,2}},
         color={255,127,0}));
     connect(sample2.y, packInt1.u) annotation (Line(
-        points={{-59.4,18},{-52,18}},
+        points={{-59.4,2},{-52,2}},
         color={255,127,0}));
     connect(integerExpression2.y, sample3.u) annotation (Line(
-        points={{-79,-12},{-73.2,-12}},
+        points={{-79,-36},{-73.2,-36}},
         color={255,127,0}));
     connect(sample3.y, addInteger.u[1]) annotation (Line(
-        points={{-59.4,-12},{-52,-12}},
+        points={{-59.4,-36},{-52,-36}},
         color={255,127,0}));
-    connect(addInteger.pkgOut[1], addBoolean.pkgIn) annotation (Line(
-        points={{-40,-22.8},{-40,-33.2}},
-        color={0,0,0},
-        pattern=LinePattern.None,
-        smooth=Smooth.None));
-    connect(addBoolean.u[1], sample4.y) annotation (Line(
-        points={{-52,-44},{-59.4,-44}},
-        color={255,0,255},
-        smooth=Smooth.None));
-    connect(sample4.u, booleanPulse.y) annotation (Line(
-        points={{-73.2,-44},{-83.3,-44}},
-        color={255,0,255},
-        smooth=Smooth.None));
-    connect(periodicRealClock.y, sample4.clock) annotation (Line(
-        points={{-81.3,-73},{-66,-73},{-66,-51.2}},
-        color={175,175,175},
-        pattern=LinePattern.Dot,
-        thickness=0.5,
-        smooth=Smooth.None));
-    connect(periodicRealClock.y, sample3.clock) annotation (Line(
-        points={{-81.3,-73},{-56,-73},{-56,-22},{-66,-22},{-66,-19.2}},
-        color={175,175,175},
-        pattern=LinePattern.Dot,
-        thickness=0.5,
-        smooth=Smooth.None));
-    connect(periodicRealClock.y, sample2.clock) annotation (Line(
-        points={{-81.3,-73},{-56,-73},{-56,8},{-66,8},{-66,10.8}},
-        color={175,175,175},
-        pattern=LinePattern.Dot,
-        thickness=0.5,
-        smooth=Smooth.None));
     connect(periodicRealClock.y, sample1.clock) annotation (Line(
-        points={{-81.3,-73},{-56,-73},{-56,36},{-66,36},{-66,38.8}},
+        points={{-77,-72},{-56,-72},{-56,28},{-66,28},{-66,32.8}},
+        color={135,135,135},
+        pattern=LinePattern.Dot,
+        thickness=0.5));
+    connect(sample2.clock, periodicRealClock.y) annotation (Line(
+        points={{-66,-5.2},{-66,-18},{-56,-18},{-56,-72},{-77,-72}},
         color={175,175,175},
         pattern=LinePattern.Dot,
-        thickness=0.5,
-        smooth=Smooth.None));
-    connect(getInteger.pkgOut[1], getBoolean.pkgIn) annotation (Line(
-        points={{36,-18.8},{36,-29.2}},
-        color={0,0,0},
-        pattern=LinePattern.None,
-        smooth=Smooth.None));
-    connect(addBoolean.pkgOut[1], resetPointer.pkgIn) annotation (Line(
-        points={{-40,-54.8},{-40,-60},{0,-60},{0,98},{36,98},{36,92.8}},
-        color={0,0,0},
-        pattern=LinePattern.None,
-        smooth=Smooth.None));
+        thickness=0.5));
+    connect(sample3.clock, periodicRealClock.y) annotation (Line(
+        points={{-66,-43.2},{-66,-72},{-77,-72}},
+        color={175,175,175},
+        pattern=LinePattern.Dot,
+        thickness=0.5));
     annotation (experiment(StopTime=5.0),
       Documentation(info="<html>
 <p>
 The example demonstrates that pack and unpack blocks of the <code>SerialPackager</code> package can be connected directly.
 </p>
-</html>"),
-      Diagram(coordinateSystem(preserveAspectRatio=false, extent={{-100,-100},{
-              100,100}}), graphics));
+</html>"));
   end TestSerialPackager;
 
   model TestSerialPackager_String
@@ -179,11 +146,14 @@ The example demonstrates that pack and unpack blocks of the <code>SerialPackager
       annotation (Placement(transformation(extent={{-92,-6},{-64,12}})));
   equation
     connect(packager.pkgOut, packInt.pkgIn) annotation (Line(
-        points={{-40,69.2},{-40,50.8}}));
+        points={{-40,69.2},{-40,50.8}},
+        pattern=LinePattern.None));
     connect(addInteger.pkgOut[1], resetPointer.pkgIn) annotation (Line(
-        points={{-40,-46.8},{-40,-56},{-20,-56},{-20,94},{-2,94},{-2,84.8}}));
+        points={{-40,-46.8},{-40,-56},{-20,-56},{-20,94},{-2,94},{-2,84.8}},
+        pattern=LinePattern.None));
     connect(resetPointer.pkgOut[1], unpackInt.pkgIn) annotation (Line(
-        points={{-2,63.2},{-2,50.8}}));
+        points={{-2,63.2},{-2,50.8}},
+        pattern=LinePattern.None));
     connect(integerExpression.y, sample1.u) annotation (Line(
         points={{-79,40},{-73.2,40}},
         color={255,127,0}));
@@ -207,13 +177,17 @@ The example demonstrates that pack and unpack blocks of the <code>SerialPackager
         pattern=LinePattern.Dot,
         thickness=0.5));
     connect(packInt.pkgOut[1], addString.pkgIn) annotation (Line(
-        points={{-40,29.2},{-40,14.8}}));
+        points={{-40,29.2},{-40,14.8}},
+        pattern=LinePattern.None));
     connect(addString.pkgOut[1], addInteger.pkgIn) annotation (Line(
-        points={{-40,-6.8},{-40,-25.2}}));
+        points={{-40,-6.8},{-40,-25.2}},
+        pattern=LinePattern.None));
     connect(unpackInt.pkgOut[1], getString.pkgIn) annotation (Line(
-        points={{-2,29.2},{-2,12.8}}));
+        points={{-2,29.2},{-2,12.8}},
+        pattern=LinePattern.None));
     connect(getString.pkgOut[1], getInteger.pkgIn) annotation (Line(
-        points={{-2,-8.8},{-2,-23.2}}));
+        points={{-2,-8.8},{-2,-23.2}},
+        pattern=LinePattern.None));
     annotation (experiment(StopTime=5.0),
       Documentation(info="<html>
 <p>
@@ -284,9 +258,11 @@ is demonstrated in this example.
       annotation (Placement(transformation(extent={{52,-10},{64,2}})));
   equation
     connect(packager.pkgOut, addReal.pkgIn) annotation (Line(
-        points={{-30,59.2},{-30,40.8}}));
+        points={{-30,59.2},{-30,40.8}},
+        pattern=LinePattern.None));
     connect(addInteger.pkgOut[1], uDPSend.pkgIn) annotation (Line(
-        points={{-30,-38.8},{-30,-47.2}}));
+        points={{-30,-38.8},{-30,-47.2}},
+        pattern=LinePattern.None));
     connect(integerExpression.y, sample1.u) annotation (Line(
         points={{-75,-28},{-67.2,-28}},
         color={255,127,0}));
@@ -298,8 +274,10 @@ is demonstrated in this example.
         color={135,135,135},
         pattern=LinePattern.Dot,
         thickness=0.5));
-    connect(uDPReceive.pkgOut,getReal.pkgIn) annotation (Line(
-        points={{30,59.2},{30,50},{30,50},{30,40.8}}));
+
+    connect(uDPReceive.pkgOut,getReal. pkgIn) annotation (Line(
+        points={{30,59.2},{30,50},{30,50},{30,40.8}},
+        pattern=LinePattern.None));
     connect(getInteger.y[1], assignClock2.u) annotation (Line(
         points={{41,-34},{50.8,-34}},
         color={255,127,0}));
@@ -309,9 +287,11 @@ is demonstrated in this example.
         pattern=LinePattern.Dot,
         thickness=0.5));
     connect(addReal.pkgOut[1], addFloat.pkgIn) annotation (Line(
-        points={{-30,19.2},{-30,12.8}}));
+        points={{-30,19.2},{-30,12.8}},
+        pattern=LinePattern.None));
     connect(addFloat.pkgOut[1], addInteger.pkgIn) annotation (Line(
-        points={{-30,-8.8},{-30,-17.2}}));
+        points={{-30,-8.8},{-30,-17.2}},
+        pattern=LinePattern.None));
     connect(realExpression1.y, sample3.u) annotation (Line(
         points={{-75,2},{-67.2,2}},
         color={0,0,127}));
@@ -335,9 +315,11 @@ is demonstrated in this example.
         pattern=LinePattern.Dot,
         thickness=0.5));
     connect(getReal.pkgOut[1], getFloat.pkgIn) annotation (Line(
-        points={{30,19.2},{30,6.8}}));
+        points={{30,19.2},{30,6.8}},
+        pattern=LinePattern.None));
     connect(getFloat.pkgOut[1], getInteger.pkgIn) annotation (Line(
-        points={{30,-14.8},{30,-23.2}}));
+        points={{30,-14.8},{30,-23.2}},
+        pattern=LinePattern.None));
     connect(getReal.y, assignClock1.u) annotation (Line(
         points={{41,30},{50.8,30}},
         color={0,0,127}));
@@ -447,23 +429,32 @@ The <code>uDPSend</code> block sends to the local port 10002. The <code>uDPRecei
       annotation (Placement(transformation(extent={{54,-48},{66,-36}})));
   equation
     connect(packager.pkgOut, addReal.pkgIn) annotation (Line(
-        points={{-28,79.2},{-28,68.8}}));
+        points={{-28,79.2},{-28,68.8}},
+        pattern=LinePattern.None));
     connect(addReal.pkgOut[1], packInt.pkgIn) annotation (Line(
-        points={{-28,47.2},{-28,36.8}}));
+        points={{-28,47.2},{-28,36.8}},
+        pattern=LinePattern.None));
     connect(packInt.pkgOut[1], packInt1.pkgIn) annotation (Line(
-        points={{-28,15.2},{-28,4.8}}));
+        points={{-28,15.2},{-28,4.8}},
+        pattern=LinePattern.None));
     connect(packInt1.pkgOut[1], addInteger1.pkgIn) annotation (Line(
-        points={{-28,-16.8},{-28,-25.2}}));
+        points={{-28,-16.8},{-28,-25.2}},
+        pattern=LinePattern.None));
     connect(addInteger1.pkgOut[1], uDPSend.pkgIn) annotation (Line(
-        points={{-28,-46.8},{-28,-52},{-28,-57.2},{-28,-57.2}}));
+        points={{-28,-46.8},{-28,-52},{-28,-57.2},{-28,-57.2}},
+        pattern=LinePattern.None));
     connect(uDPReceive2_1.pkgOut, getReal.pkgIn) annotation (Line(
-        points={{30,75.2},{30,71.4},{30,66.8},{30,66.8}}));
+        points={{30,75.2},{30,71.4},{30,66.8},{30,66.8}},
+        pattern=LinePattern.None));
     connect(getReal.pkgOut[1], unpackInt.pkgIn) annotation (Line(
-        points={{30,45.2},{30,34.8}}));
+        points={{30,45.2},{30,34.8}},
+        pattern=LinePattern.None));
     connect(unpackInt.pkgOut[1], unpackInt1.pkgIn) annotation (Line(
-        points={{30,13.2},{30,4.8}}));
+        points={{30,13.2},{30,4.8}},
+        pattern=LinePattern.None));
     connect(unpackInt1.pkgOut[1], getInteger1.pkgIn) annotation (Line(
-        points={{30,-16.8},{30,-31.2}}));
+        points={{30,-16.8},{30,-31.2}},
+        pattern=LinePattern.None));
     connect(realExpression.y, sample2.u) annotation (Line(
         points={{-73,58},{-65.2,58}},
         color={0,0,127}));
@@ -612,23 +603,26 @@ In particular this model demonstrates how integer values can be packed and unpac
       annotation (Placement(transformation(extent={{62,-6},{74,6}})));
   equation
     connect(packager.pkgOut, addReal.pkgIn) annotation (Line(
-        points={{-30,59.2},{-30,40.8}}));
+        points={{-30,59.2},{-30,40.8}},
+        pattern=LinePattern.None));
     connect(addReal.pkgOut[1], addInteger.pkgIn) annotation (Line(
-        points={{-30,19.2},{-30,0.8}}));
+        points={{-30,19.2},{-30,0.8}},
+        pattern=LinePattern.None));
     connect(addInteger.pkgOut[1], sharedMemoryWrite.pkgIn) annotation (Line(
-        points={{-30,-20.8},{-30,-30},{-30,-39.2},{-30,-39.2}}));
-    connect(integerExpression.y,sample1.u) annotation (Line(
+        points={{-30,-20.8},{-30,-30},{-30,-39.2},{-30,-39.2}},
+        pattern=LinePattern.None));
+    connect(integerExpression.y,sample1. u) annotation (Line(
         points={{-75,-10},{-67.2,-10}},
         color={255,127,0}));
     connect(sample1.y, addInteger.u[1]) annotation (Line(
         points={{-53.4,-10},{-42,-10}},
         color={255,127,0}));
-    connect(periodicRealClock.y,sample1.clock) annotation (Line(
+    connect(periodicRealClock.y,sample1. clock) annotation (Line(
         points={{-73,-80},{-60,-80},{-60,-17.2}},
         color={135,135,135},
         pattern=LinePattern.Dot,
         thickness=0.5));
-    connect(realExpression.y,sample2.u) annotation (Line(
+    connect(realExpression.y,sample2. u) annotation (Line(
         points={{-75,30},{-67.2,30}},
         color={0,0,127}));
     connect(periodicRealClock.y, sample2[1].clock) annotation (Line(
@@ -670,9 +664,11 @@ In particular this model demonstrates how integer values can be packed and unpac
         pattern=LinePattern.Dot,
         thickness=0.5));
     connect(sharedMemoryRead.pkgOut, getReal.pkgIn) annotation (Line(
-        points={{40,69.2},{40,50.8}}));
+        points={{40,69.2},{40,50.8}},
+        pattern=LinePattern.None));
     connect(getReal.pkgOut[1], getInteger.pkgIn) annotation (Line(
-        points={{40,29.2},{40,10.8}}));
+        points={{40,29.2},{40,10.8}},
+        pattern=LinePattern.None));
     connect(getReal.y, assignClock1.u) annotation (Line(
         points={{51,40},{60.8,40}},
         color={0,0,127}));

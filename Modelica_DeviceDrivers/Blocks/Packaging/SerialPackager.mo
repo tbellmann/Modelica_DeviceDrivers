@@ -31,10 +31,9 @@ package SerialPackager "Blocks for constructing packages"
         input Modelica_DeviceDrivers.Packaging.SerialPackager     pkg;
         input Real u[:];
         input Real dummy;
-        input Modelica_DeviceDrivers.Utilities.Types.ByteOrder byteOrder;
         output Real dummy2;
       algorithm
-       Modelica_DeviceDrivers.Packaging.SerialPackager_.addReal(pkg,u,byteOrder);
+       Modelica_DeviceDrivers.Packaging.SerialPackager_.addReal(pkg,u);
        dummy2 :=dummy;
       end addReal;
 
@@ -42,10 +41,9 @@ package SerialPackager "Blocks for constructing packages"
         input Modelica_DeviceDrivers.Packaging.SerialPackager  pkg;
         input Real u[:];
         input Real dummy;
-        input Modelica_DeviceDrivers.Utilities.Types.ByteOrder byteOrder;
         output Real dummy2;
       algorithm
-       Modelica_DeviceDrivers.Packaging.SerialPackager_.addRealAsFloat(pkg,u,byteOrder);
+       Modelica_DeviceDrivers.Packaging.SerialPackager_.addRealAsFloat(pkg,u);
        dummy2 :=dummy;
       end addRealAsFloat;
 
@@ -64,10 +62,9 @@ package SerialPackager "Blocks for constructing packages"
         input Modelica_DeviceDrivers.Packaging.SerialPackager     pkg;
         input Integer u[:];
         input Real dummy;
-        input Modelica_DeviceDrivers.Utilities.Types.ByteOrder byteOrder;
         output Real dummy2;
       algorithm
-       Modelica_DeviceDrivers.Packaging.SerialPackager_.addInteger(pkg,u,byteOrder);
+       Modelica_DeviceDrivers.Packaging.SerialPackager_.addInteger(pkg,u);
        dummy2 := dummy;
       end addInteger;
 
@@ -75,11 +72,10 @@ package SerialPackager "Blocks for constructing packages"
         input Modelica_DeviceDrivers.Packaging.SerialPackager     pkg;
         input Integer n;
         input Real dummy;
-        input Modelica_DeviceDrivers.Utilities.Types.ByteOrder byteOrder;
         output Real y[n];
         output Real dummy2;
       algorithm
-        y := Modelica_DeviceDrivers.Packaging.SerialPackager_.getReal(pkg, n, byteOrder);
+        y := Modelica_DeviceDrivers.Packaging.SerialPackager_.getReal(pkg, n);
         dummy2 :=dummy;
       end getReal;
 
@@ -87,11 +83,10 @@ package SerialPackager "Blocks for constructing packages"
         input Modelica_DeviceDrivers.Packaging.SerialPackager     pkg;
         input Integer n;
         input Real dummy;
-        input Modelica_DeviceDrivers.Utilities.Types.ByteOrder byteOrder;
         output Real y[n];
         output Real dummy2;
       algorithm
-        y := Modelica_DeviceDrivers.Packaging.SerialPackager_.getRealFromFloat(pkg, n, byteOrder);
+        y := Modelica_DeviceDrivers.Packaging.SerialPackager_.getRealFromFloat(pkg, n);
         dummy2 :=dummy;
       end getRealFromFloat;
 
@@ -108,11 +103,10 @@ package SerialPackager "Blocks for constructing packages"
         input Modelica_DeviceDrivers.Packaging.SerialPackager     pkg;
         input Integer n;
         input Real dummy;
-        input Modelica_DeviceDrivers.Utilities.Types.ByteOrder byteOrder;
         output Integer y[n];
         output Real dummy2;
       algorithm
-        y := Modelica_DeviceDrivers.Packaging.SerialPackager_.getInteger(pkg, n, byteOrder);
+        y := Modelica_DeviceDrivers.Packaging.SerialPackager_.getInteger(pkg, n);
         dummy2 :=dummy;
       end getInteger;
 
@@ -135,6 +129,20 @@ package SerialPackager "Blocks for constructing packages"
        Modelica_DeviceDrivers.Packaging.SerialPackager_.clear(pkg);
        dummy2 := dummy;
       end clear;
+
+    function setPackage
+        import Modelica_DeviceDrivers.Packaging.SerialPackager;
+        import Modelica_DeviceDrivers;
+      input Modelica_DeviceDrivers.Packaging.SerialPackager
+                           pkg;
+      input String data "Packager payload data encoded as Modelica String";
+      input Integer dataSize "Number of payload data bytes";
+      input Real dummy;
+      output Real dummy2;
+    algorithm
+      Modelica_DeviceDrivers.Packaging.SerialPackager_.setPackage(pkg, data, dataSize);
+      dummy2 := dummy;
+    end setPackage;
 
     function integerBitPack "Encode integer value at bit level"
         import Modelica_DeviceDrivers.Packaging.SerialPackager;
@@ -175,66 +183,55 @@ package SerialPackager "Blocks for constructing packages"
     import
       Modelica_DeviceDrivers.Blocks.Packaging.SerialPackager.Internal.DummyFunctions;
     import Modelica_DeviceDrivers.Packaging.SerialPackager;
-    import Modelica_DeviceDrivers.Packaging.alignAtByteBoundary;
+    import Modelica_DeviceDrivers.Packaging.alignAtByteBoundery;
 
-    parameter Boolean enableExternalTrigger = false
-      "true, enable external trigger input signal, otherwise use sample time settings below"
-      annotation (Dialog(tab="Advanced", group="Activation"), choices(checkBox=true));
     parameter Boolean useBackwardSampleTimePropagation = true
-      "true, use backward propagation for sample time, otherwise switch to forward propagation"
-      annotation(Dialog(enable = not enableExternalTrigger, tab="Advanced", group="Activation"), choices(checkBox=true));
-    parameter Modelica.SIunits.Period sampleTime=0.01
-      "Sample time if forward propagation of sample time is used"
-       annotation (Dialog(enable = (not useBackwardSampleTimePropagation) and (not enableExternalTrigger), tab="Advanced", group="Activation"));
+      "true, use backward propagation for sample time (default!), otherwise switch to forward propagation"
+      annotation(Dialog(tab="Advanced"), choices(__Dymola_checkBox=true));
+    parameter Real sampleTime=0.01
+      "Sample time if forward propagation of sample time is used"                              annotation (Dialog(enable = not useBackwardSampleTimePropagation, tab="Advanced"));
 
     parameter Boolean useBackwardPropagatedBufferSize = true
-      "true, use backward propagated (automatic) buffer size for package, otherwise use manually specified buffer size below"
-      annotation(Dialog(tab="Advanced", group="Buffer size settings"), choices(checkBox=true));
+      "true, use backward propagated (automatic) buffer size for package (default!), otherwise use manually specified buffer size below"
+      annotation(Dialog(tab="Advanced"), choices(__Dymola_checkBox=true));
     parameter Integer userBufferSize = 16*1024
       "Buffer size for package if backward propagation of buffer size is deactivated"
-       annotation (Dialog(enable = not useBackwardPropagatedBufferSize, tab="Advanced", group="Buffer size settings"));
-    Interfaces.PackageOut pkgOut(pkg = SerialPackager(if useBackwardPropagatedBufferSize then bufferSize else userBufferSize))
+                                                                                      annotation (Dialog(enable = not useBackwardPropagatedBufferSize, tab="Advanced"));
+
+    Interfaces.PackageOut pkgOut
       annotation (Placement(transformation(extent={{-20,-128},{20,-88}})));
-    Modelica.Blocks.Interfaces.BooleanInput trigger if                    enableExternalTrigger
-      annotation (Placement(transformation(extent={{-140,-20},{-100,20}})));
   protected
-    Modelica.Blocks.Interfaces.BooleanInput internalTrigger;
-    Modelica.Blocks.Interfaces.BooleanInput conditionalInternalTrigger if not enableExternalTrigger;
-    Modelica.Blocks.Interfaces.BooleanInput actTrigger
-         annotation (HideResult=true);
     Integer backwardPropagatedBufferSize;
     Integer bufferSize;
   equation
-    /* Condional connect equations to either use external trigger or internal trigger */
-    internalTrigger = if useBackwardSampleTimePropagation then pkgOut.backwardTrigger else sample(0,sampleTime);
-    connect(internalTrigger, conditionalInternalTrigger);
-    connect(conditionalInternalTrigger, actTrigger);
-    connect(trigger, actTrigger);
 
     when initial() then
       /* If userPkgBitSize is set, use it. Otherwise use auto package size. */
-      backwardPropagatedBufferSize = if pkgOut.userPkgBitSize > 0 then
-          alignAtByteBoundary(pkgOut.userPkgBitSize)  else
-          alignAtByteBoundary(pkgOut.autoPkgBitSize);
+      backwardPropagatedBufferSize =  if pkgOut.userPkgBitSize > 0 then
+          alignAtByteBoundery(pkgOut.userPkgBitSize)  else
+          alignAtByteBoundery(pkgOut.autoPkgBitSize);
       bufferSize = if useBackwardPropagatedBufferSize then backwardPropagatedBufferSize
          else userBufferSize;
+      pkgOut.pkg = SerialPackager(bufferSize);
+      Modelica.Utilities.Streams.print("SerialPackager: Created package with "
+        +String(bufferSize)+" bytes size.");
     end when;
 
-    pkgOut.trigger = actTrigger;
+    pkgOut.trigger = if useBackwardSampleTimePropagation then pkgOut.backwardTrigger else sample(0,sampleTime);
     when pkgOut.trigger then
       pkgOut.dummy = DummyFunctions.clear(pkgOut.pkg, time);
     end when;
 
     annotation (Icon(coordinateSystem(preserveAspectRatio=true, extent={{-100,
               -100},{100,100}}), graphics={Bitmap(extent={{-70,70},{70,-70}},
-              fileName="Modelica://Modelica_DeviceDrivers/Resources/Images/Icons/package.png")}), Documentation(info="<html>
+              fileName="Modelica://Modelica_DeviceDrivers/Resources/Images/Icons/package.PNG")}), Documentation(info="<html>
 <p>
 The <code>Packager</code> block creates a packager object to which payload can be added by subsequent blocks.
 </p>
 <h5>Advanced parameter settings</h5>
 <p>
 With the default parameter settings the buffer size (size of the serialized package), as well as the sample time of the block is determined automatically by
-backward propagation. However, that values may also be set manually. An example there this functionality is used is the <a href=\"modelica://Modelica_DeviceDrivers.Blocks.Examples.TestSerialPackager\"><code>TestSerialPackager</code></a> model. In that model the parameter <code>sampleTime</code> is explicitly set, since backward propagation is not possible in that case.
+backward propagation. However, that values may also be set manually. An example there this functionality is used is the <a href=\"modelica://Modelica_DeviceDrivers.Blocks.Examples.TestSerialPackager\"><code>TestSerialPackager</code></a> model. In that model the parameter <code>sampleTime</code> is explicitely set, since backward propagation is not possible in that case.
 </p>
 <h4>Examples</h4>
 <p>
@@ -251,10 +248,8 @@ and one Integer value is added, serialized and finally sent using UDP.
     extends Modelica_DeviceDrivers.Utilities.Icons.SerialPackagerWriteIcon;
     extends
       Modelica_DeviceDrivers.Blocks.Packaging.SerialPackager.Internal.PartialSerialPackager;
-    import Modelica_DeviceDrivers.Packaging.alignAtByteBoundary;
-    import Modelica_DeviceDrivers.Utilities.Types.ByteOrder;
-    parameter Integer n = 1 "Vector size";
-    parameter ByteOrder byteOrder = ByteOrder.LE;
+    import Modelica_DeviceDrivers.Packaging.alignAtByteBoundery;
+    parameter Integer n = 1;
     Modelica.Blocks.Interfaces.BooleanInput u[n]
       annotation (Placement(transformation(extent={{-140,-20},{-100,20}})));
   protected
@@ -267,15 +262,14 @@ and one Integer value is added, serialized and finally sent using UDP.
     end for;
 
     when initial() then
-      pkgIn.autoPkgBitSize = if nu == 1 then alignAtByteBoundary(pkgOut[1].autoPkgBitSize)*8 + n*32 else n*32;
+      pkgIn.autoPkgBitSize = if nu == 1 then alignAtByteBoundery(pkgOut[1].autoPkgBitSize)*8 + n*32 else n*32;
     end when;
-    when pkgIn.trigger then
+    when (pkgIn.trigger) then
       pkgOut.dummy =
         Modelica_DeviceDrivers.Blocks.Packaging.SerialPackager.Internal.DummyFunctions.addInteger(
           pkgOut.pkg,
           u_int,
-          pkgIn.dummy,
-          byteOrder);
+          pkgIn.dummy);
     end when;
 
     annotation (Icon(graphics={
@@ -298,24 +292,21 @@ and one Integer value is added, serialized and finally sent using UDP.
     extends Modelica_DeviceDrivers.Utilities.Icons.SerialPackagerWriteIcon;
     extends
       Modelica_DeviceDrivers.Blocks.Packaging.SerialPackager.Internal.PartialSerialPackager;
-    import Modelica_DeviceDrivers.Packaging.alignAtByteBoundary;
-    import Modelica_DeviceDrivers.Utilities.Types.ByteOrder;
-    parameter Integer n = 1 "Vector size";
-    parameter ByteOrder byteOrder = ByteOrder.LE;
+    import Modelica_DeviceDrivers.Packaging.alignAtByteBoundery;
+    parameter Integer n = 1;
     Modelica.Blocks.Interfaces.IntegerInput u[n]
       annotation (Placement(transformation(extent={{-140,-20},{-100,20}})));
   equation
 
     when initial() then
-      pkgIn.autoPkgBitSize = if nu == 1 then alignAtByteBoundary(pkgOut[1].autoPkgBitSize)*8 + n*32 else n*32;
+      pkgIn.autoPkgBitSize = if nu == 1 then alignAtByteBoundery(pkgOut[1].autoPkgBitSize)*8 + n*32 else n*32;
     end when;
-    when pkgIn.trigger then
+    when (pkgIn.trigger) then
       pkgOut.dummy =
         Modelica_DeviceDrivers.Blocks.Packaging.SerialPackager.Internal.DummyFunctions.addInteger(
           pkgOut.pkg,
           u,
-          pkgIn.dummy,
-          byteOrder);
+          pkgIn.dummy);
     end when;
 
     annotation (Icon(graphics={
@@ -341,25 +332,22 @@ and one Integer value is added, serialized and finally sent using UDP.
     extends Modelica_DeviceDrivers.Utilities.Icons.SerialPackagerWriteIcon;
     extends
       Modelica_DeviceDrivers.Blocks.Packaging.SerialPackager.Internal.PartialSerialPackager;
-    import Modelica_DeviceDrivers.Packaging.alignAtByteBoundary;
-    import Modelica_DeviceDrivers.Utilities.Types.ByteOrder;
-    parameter Integer n = 1 "Vector size";
-    parameter ByteOrder byteOrder = ByteOrder.LE;
+    import Modelica_DeviceDrivers.Packaging.alignAtByteBoundery;
+    parameter Integer n = 1;
     Modelica.Blocks.Interfaces.RealInput u[n]
       annotation (Placement(transformation(extent={{-140,-20},{-100,20}})));
   equation
 
     when initial() then
-      pkgIn.autoPkgBitSize = if nu == 1 then alignAtByteBoundary(pkgOut[1].autoPkgBitSize)*8 + n*64 else n*64;
+      pkgIn.autoPkgBitSize = if nu == 1 then alignAtByteBoundery(pkgOut[1].autoPkgBitSize)*8 + n*64 else n*64;
     end when;
 
-    when pkgIn.trigger then
+    when (pkgIn.trigger) then
       pkgOut.dummy =
         Modelica_DeviceDrivers.Blocks.Packaging.SerialPackager.Internal.DummyFunctions.addReal(
           pkgOut.pkg,
           u,
-          pkgIn.dummy,
-          byteOrder);
+          pkgIn.dummy);
     end when;
     annotation (Icon(graphics={
           Text(
@@ -384,25 +372,22 @@ and one Integer value is added, serialized and finally sent using UDP.
     extends Modelica_DeviceDrivers.Utilities.Icons.SerialPackagerWriteIcon;
     extends
       Modelica_DeviceDrivers.Blocks.Packaging.SerialPackager.Internal.PartialSerialPackager;
-    import Modelica_DeviceDrivers.Packaging.alignAtByteBoundary;
-    import Modelica_DeviceDrivers.Utilities.Types.ByteOrder;
-    parameter Integer n = 1 "Vector size";
-    parameter ByteOrder byteOrder = ByteOrder.LE;
+    import Modelica_DeviceDrivers.Packaging.alignAtByteBoundery;
+    parameter Integer n = 1;
     Modelica.Blocks.Interfaces.RealInput u[n]
       annotation (Placement(transformation(extent={{-140,-20},{-100,20}})));
   equation
 
     when initial() then
-      pkgIn.autoPkgBitSize = if nu == 1 then alignAtByteBoundary(pkgOut[1].autoPkgBitSize)*8 + n*32 else n*32;
+      pkgIn.autoPkgBitSize = if nu == 1 then alignAtByteBoundery(pkgOut[1].autoPkgBitSize)*8 + n*32 else n*32;
     end when;
 
-    when pkgIn.trigger then
+    when (pkgIn.trigger) then
       pkgOut.dummy =
         Modelica_DeviceDrivers.Blocks.Packaging.SerialPackager.Internal.DummyFunctions.addRealAsFloat(
           pkgOut.pkg,
           u,
-          pkgIn.dummy,
-          byteOrder);
+          pkgIn.dummy);
     end when;
     annotation (Icon(coordinateSystem(
             preserveAspectRatio=false, extent={{-100,-100},{100,100}}),
@@ -424,16 +409,16 @@ and one Integer value is added, serialized and finally sent using UDP.
     extends Modelica_DeviceDrivers.Utilities.Icons.SerialPackagerWriteIcon;
     extends
       Modelica_DeviceDrivers.Blocks.Packaging.SerialPackager.Internal.PartialSerialPackager;
-    import Modelica_DeviceDrivers.Packaging.alignAtByteBoundary;
+    import Modelica_DeviceDrivers.Packaging.alignAtByteBoundery;
     parameter Integer bufferSize = 40
       "Buffer size (in bytes) reserved for String (ensure that same buffer size is used in corresponding GetString block!)";
-    input String data = "A mostly harmless String" annotation(Dialog(enable=true));
+    input String data = "A mostly harmless String" annotation(Dialog=true);
   equation
     when initial() then
       pkgIn.autoPkgBitSize = if nu == 1 then
-        alignAtByteBoundary(pkgOut[1].autoPkgBitSize)*8 + bufferSize*8 else bufferSize*8;
+        alignAtByteBoundery(pkgOut[1].autoPkgBitSize)*8 + bufferSize*8 else bufferSize*8;
     end when;
-    when pkgIn.trigger then
+    when (pkgIn.trigger) then
       assert((Modelica.Utilities.Strings.length(data) + 1 <= bufferSize),
       "AddString: Length of string (+ string termination character) exceeds reserved bufferSize");
       pkgOut.dummy =
@@ -464,32 +449,30 @@ and one Integer value is added, serialized and finally sent using UDP.
     extends Modelica_DeviceDrivers.Utilities.Icons.SerialPackagerReadIcon;
     extends
       Modelica_DeviceDrivers.Blocks.Packaging.SerialPackager.Internal.PartialSerialPackager;
-    import Modelica_DeviceDrivers.Packaging.alignAtByteBoundary;
-    import Modelica_DeviceDrivers.Utilities.Types.ByteOrder;
-    parameter Integer n = 1 "Vector size";
-    parameter ByteOrder byteOrder = ByteOrder.LE;
-    discrete Modelica.Blocks.Interfaces.BooleanOutput y[n](each start=false, each fixed=true)
+    import Modelica_DeviceDrivers.Packaging.alignAtByteBoundery;
+    parameter Integer n = 1;
+    Modelica.Blocks.Interfaces.BooleanOutput y[
+                                            n]
       annotation (Placement(transformation(extent={{100,-10},{120,10}})));
   protected
     Integer y_int[n];
     Real dummy;
   equation
     when initial() then
-      pkgIn.autoPkgBitSize = if nu == 1 then alignAtByteBoundary( pkgOut[1].autoPkgBitSize)*8 + n*32 else n*32;
+      pkgIn.autoPkgBitSize = if nu == 1 then alignAtByteBoundery( pkgOut[1].autoPkgBitSize)*8 + n*32 else n*32;
     end when;
 
-    when pkgIn.trigger then
+    when (pkgIn.trigger) then
       (y_int, dummy) =
         Modelica_DeviceDrivers.Blocks.Packaging.SerialPackager.Internal.DummyFunctions.getInteger(
           pkgIn.pkg,
           n,
-          pkgIn.dummy,
-          byteOrder);
+          pkgIn.dummy);
       pkgOut.dummy = fill(dummy,nu);
     end when;
 
     for i in 1:n loop
-      y[i] = if (y_int[i] == 1) then true else false;
+      y[i] = if    (y_int[i] == 1) then true else false;
     end for;
 
     annotation (Icon(graphics={
@@ -512,26 +495,23 @@ and one Integer value is added, serialized and finally sent using UDP.
     extends Modelica_DeviceDrivers.Utilities.Icons.SerialPackagerReadIcon;
     extends
       Modelica_DeviceDrivers.Blocks.Packaging.SerialPackager.Internal.PartialSerialPackager;
-    import Modelica_DeviceDrivers.Packaging.alignAtByteBoundary;
-    import Modelica_DeviceDrivers.Utilities.Types.ByteOrder;
-    parameter Integer n = 1 "Vector size";
-    parameter ByteOrder byteOrder = ByteOrder.LE;
-    discrete Modelica.Blocks.Interfaces.IntegerOutput y[n](each start=0, each fixed=true)
+    import Modelica_DeviceDrivers.Packaging.alignAtByteBoundery;
+    parameter Integer n = 1;
+    Modelica.Blocks.Interfaces.IntegerOutput y[n]
       annotation (Placement(transformation(extent={{100,-10},{120,10}})));
   protected
     Real dummy;
   equation
     when initial() then
-      pkgIn.autoPkgBitSize = if nu == 1 then alignAtByteBoundary( pkgOut[1].autoPkgBitSize)*8 + n*32 else n*32;
+      pkgIn.autoPkgBitSize = if nu == 1 then alignAtByteBoundery( pkgOut[1].autoPkgBitSize)*8 + n*32 else n*32;
     end when;
 
-    when pkgIn.trigger then
+    when (pkgIn.trigger) then
       (y,dummy) =
         Modelica_DeviceDrivers.Blocks.Packaging.SerialPackager.Internal.DummyFunctions.getInteger(
           pkgIn.pkg,
           n,
-          pkgIn.dummy,
-          byteOrder);
+          pkgIn.dummy);
       pkgOut.dummy = fill(dummy,nu);
     end when;
 
@@ -555,27 +535,24 @@ and one Integer value is added, serialized and finally sent using UDP.
     extends Modelica_DeviceDrivers.Utilities.Icons.SerialPackagerReadIcon;
     extends
       Modelica_DeviceDrivers.Blocks.Packaging.SerialPackager.Internal.PartialSerialPackager;
-    import Modelica_DeviceDrivers.Packaging.alignAtByteBoundary;
-    import Modelica_DeviceDrivers.Utilities.Types.ByteOrder;
-    parameter Integer n = 1 "Vector size";
-    parameter ByteOrder byteOrder = ByteOrder.LE;
-    discrete Modelica.Blocks.Interfaces.RealOutput y[n](each start=0, each fixed=true)
+    import Modelica_DeviceDrivers.Packaging.alignAtByteBoundery;
+    parameter Integer n = 1;
+    Modelica.Blocks.Interfaces.RealOutput y[n]
       annotation (Placement(transformation(extent={{100,-10},{120,10}})));
   protected
     Real dummy;
   equation
 
     when initial() then
-      pkgIn.autoPkgBitSize = if nu == 1 then alignAtByteBoundary(pkgOut[1].autoPkgBitSize)*8 + n*64 else n*64;
+      pkgIn.autoPkgBitSize = if nu == 1 then alignAtByteBoundery(pkgOut[1].autoPkgBitSize)*8 + n*64 else n*64;
     end when;
 
-    when pkgIn.trigger then
+    when (pkgIn.trigger) then
       (y,dummy) =
          Modelica_DeviceDrivers.Blocks.Packaging.SerialPackager.Internal.DummyFunctions.getReal(
           pkgIn.pkg,
           n,
-          pkgIn.dummy,
-          byteOrder);
+          pkgIn.dummy);
       pkgOut.dummy = fill(dummy,nu);
     end when;
 
@@ -602,27 +579,24 @@ and one Integer value is added, serialized and finally sent using UDP.
     extends Modelica_DeviceDrivers.Utilities.Icons.SerialPackagerReadIcon;
     extends
       Modelica_DeviceDrivers.Blocks.Packaging.SerialPackager.Internal.PartialSerialPackager;
-    import Modelica_DeviceDrivers.Packaging.alignAtByteBoundary;
-    import Modelica_DeviceDrivers.Utilities.Types.ByteOrder;
-    parameter Integer n = 1 "Vector size";
-    parameter ByteOrder byteOrder = ByteOrder.LE;
-    discrete Modelica.Blocks.Interfaces.RealOutput y[n](each start=0, each fixed=true)
+    import Modelica_DeviceDrivers.Packaging.alignAtByteBoundery;
+    parameter Integer n = 1;
+    Modelica.Blocks.Interfaces.RealOutput y[n]
       annotation (Placement(transformation(extent={{100,-10},{120,10}})));
   protected
     Real dummy;
   equation
 
     when initial() then
-      pkgIn.autoPkgBitSize = if nu == 1 then alignAtByteBoundary(pkgOut[1].autoPkgBitSize)*8 + n*32 else n*32;
+      pkgIn.autoPkgBitSize = if nu == 1 then alignAtByteBoundery(pkgOut[1].autoPkgBitSize)*8 + n*32 else n*32;
     end when;
 
-    when pkgIn.trigger then
+    when (pkgIn.trigger) then
       (y,dummy) =
          Modelica_DeviceDrivers.Blocks.Packaging.SerialPackager.Internal.DummyFunctions.getRealFromFloat(
           pkgIn.pkg,
           n,
-          pkgIn.dummy,
-          byteOrder);
+          pkgIn.dummy);
       pkgOut.dummy = fill(dummy,nu);
     end when;
 
@@ -646,20 +620,20 @@ and one Integer value is added, serialized and finally sent using UDP.
     extends Modelica_DeviceDrivers.Utilities.Icons.SerialPackagerReadIcon;
     extends
       Modelica_DeviceDrivers.Blocks.Packaging.SerialPackager.Internal.PartialSerialPackager;
-    import Modelica_DeviceDrivers.Packaging.alignAtByteBoundary;
+    import Modelica_DeviceDrivers.Packaging.alignAtByteBoundery;
     import Modelica.Utilities.Strings.length;
     parameter Integer bufferSize = 40
       "Buffer size (in bytes) reserved for String (ensure that same buffer size is used in corresponding AddString block!)";
-    discrete output String data(start="");
+    output String data;
   protected
     Real dummy;
   equation
 
     when initial() then
-      pkgIn.autoPkgBitSize = if nu == 1 then alignAtByteBoundary(pkgOut[1].autoPkgBitSize)*8 + bufferSize*8 else bufferSize*8;
+      pkgIn.autoPkgBitSize = if nu == 1 then alignAtByteBoundery(pkgOut[1].autoPkgBitSize)*8 + bufferSize*8 else bufferSize*8;
     end when;
 
-    when pkgIn.trigger then
+    when (pkgIn.trigger) then
       (data,dummy) =
         Modelica_DeviceDrivers.Blocks.Packaging.SerialPackager.Internal.DummyFunctions.getString(
           pkgIn.pkg,
@@ -689,7 +663,7 @@ and one Integer value is added, serialized and finally sent using UDP.
       "Bit offset from current packager position until first encoding bit";
     parameter Integer width = 32 "Number of bits that encode the integer value";
     Modelica.Blocks.Interfaces.IntegerInput u(min=0)
-      "Only positive (unsigned) values are supported"
+      "Only postive (unsigned) values are supported"
       annotation (Placement(transformation(extent={{-140,-20},{-100,20}})));
   equation
 
@@ -697,7 +671,7 @@ and one Integer value is added, serialized and finally sent using UDP.
       pkgIn.autoPkgBitSize = if nu == 1 then pkgOut[1].autoPkgBitSize + bitOffset + width else bitOffset + width;
     end when;
 
-    when pkgIn.trigger then
+    when (pkgIn.trigger) then
       pkgOut.dummy =
         Modelica_DeviceDrivers.Blocks.Packaging.SerialPackager.Internal.DummyFunctions.integerBitPack(
           pkgOut.pkg,
@@ -722,7 +696,7 @@ and one Integer value is added, serialized and finally sent using UDP.
                 "Modelica://Modelica_DeviceDrivers/Resources/Images/Icons/Int2BitArrow.png")}),
       Documentation(info="<html>
 <p>The block allows to pack unsigned integer values on bit level. The number of bits used for encoding is set by parameter <code>width</code>, therefore the maximum value of the integer signal that can be encoded is <code>2^width - 1</code>. The parameter <code>bitOffset</code> allows to specify the bit at which the encoding starts <b>relative</b> to the preceding block. </p>
-<p>If an <code>AddBoolean</code>, <code>AddInteger</code>, <code>AddReal</code> or <code>AddString</code> block follows a <code>PackUnsignedInteger</code> block the bit position after the <code>PackUnsignedInteger</code> block is aligned to the next byte boundary.</p>
+<p>If an <code>AddBoolean</code>, <code>AddInteger</code>, <code>AddReal</code> or <code>AddString</code> block follows a <code>PackUnsignedInteger</code> block the bit position after the <code>PackUnsignedInteger</code> block is aligned to the next byte boundery.</p>
 <h4><font color=\"#008000\">Endianness</font></h4>
 <p>Currently, the pack block only supports Intel-Endiannes (<b>little-endian!</b>).</p>
 <p>For information about endianness in computing see for example <a href=\"http://en.wikipedia.org/wiki/Endianness\">http://en.wikipedia.org/wiki/Endianness</a></p>
@@ -760,7 +734,7 @@ Value of bit                   : (0  0  0  0  0  0  1  1)  (.  .   .  .  .  .  0
       pkgIn.autoPkgBitSize = if nu == 1 then pkgOut[1].autoPkgBitSize + bitOffset + width else bitOffset + width;
     end when;
 
-    when pkgIn.trigger then
+    when (pkgIn.trigger) then
       (y,dummy) =
         Modelica_DeviceDrivers.Blocks.Packaging.SerialPackager.Internal.DummyFunctions.integerBitUnpack(
           pkgIn.pkg,
@@ -785,7 +759,7 @@ Value of bit                   : (0  0  0  0  0  0  1  1)  (.  .   .  .  .  .  0
             textString="I")}),
       Documentation(info="<html>
 <p>The block allows to unpack unsigned integer values on bit level. The number of bits used for decoding is set by parameter <code>width</code>. The parameter <code>bitOffset</code> allows to specify the bit at which the decoding starts <b>relative</b> to the preceding block. </p>
-<p>If an <code>GetBoolean</code>, <code>GetInteger</code>, <code>GetReal</code> or <code>GetString</code> block follows an <code>UnpackUnsignedInteger</code> block the bit position after the <code>UnpackUnsignedInteger</code> block is aligned to the next byte boundary.</p>
+<p>If an <code>GetBoolean</code>, <code>GetInteger</code>, <code>GetReal</code> or <code>GetString</code> block follows an <code>UnpackUnsignedInteger</code> block the bit position after the <code>UnpackUnsignedInteger</code> block is aligned to the next byte boundery.</p>
 <h4><font color=\"#008000\">Endianness</font></h4>
 <p>Currently, the pack block only supports Intel-Endiannes (<b>little-endian!</b>).</p>
 <p>For information about endianness in computing see for example <a href=\"http://en.wikipedia.org/wiki/Endianness\">http://en.wikipedia.org/wiki/Endianness</a></p>
@@ -795,7 +769,7 @@ The block is used in example
 <a href=\"modelica://Modelica_DeviceDrivers.Blocks.Examples.TestSerialPackagerBitPack_UDP\"><code>TestSerialPackagerBitPack_UDP</code></a>, depicted below.
 </p>
 <p><img src=\"modelica://Modelica_DeviceDrivers/Resources/Images/TestSerialPackagerBitUnpack_UDP_model.png\"/></p>
-The first 3*8 byte of the payload is deserialized to Real variables. After that two Integer variables are unpacked from the payload. Finally one Integer variable is deserialized using an ordinary <code>GetInteger</code> block. Assume that we had the memory layout below and would like to unpack the second Integer value. A '.' denotes that the bit is not part of the bits encoding the value (LSB = Least Significant Byte and MSB = Most Significant Byte).
+The first 3*8 byte of the payload is deserialized to Real variables. After that two Integer variables are unpacked from the payload. Finally one Integer variable is deserialized using an ordinary <code>GetInteger</code> block.  Assume that we had the memory layout below and would like to unpack the second Integer value. A '.' denotes that the bit is not part of the bits encoding the value (LSB = Least Significant Byte and MSB = Most Significant Byte).
 <pre>
                                   byte 24  byte 25  byte 26          byte 27                    byte 28
                                                                        LSB                         MSB
@@ -813,10 +787,10 @@ Value of bit                   :                               0  1  .  .  .  . 
   protected
       Real dummy;
   equation
-    when initial() then
+    when (initial()) then
       pkgIn.autoPkgBitSize = 0;
     end when;
-    when pkgIn.trigger then
+    when (pkgIn.trigger) then
       dummy =
         Modelica_DeviceDrivers.Blocks.Packaging.SerialPackager.Internal.DummyFunctions.resetPointer(pkgIn.pkg, pkgIn.dummy);
       pkgOut.dummy = fill(dummy,nu);
